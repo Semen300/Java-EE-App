@@ -19,8 +19,28 @@ public class UserService {
                 cur.setFio(Users.getString("fio"));
                 users.add(cur);
             }
-        } catch (java.sql.SQLException e){}
+        } catch (java.sql.SQLException e){
+            System.out.println(e.getMessage());
+        }
+        catch (NullPointerException e){
+            System.out.println(e.getMessage());
+        }
         return users;
+    }
+
+    public User getUserByLogin(String login){
+        UserDBService userDBService=new UserDBService();
+        User user = new User();
+        ResultSet rs = userDBService.select(login);
+        if(rs!=null) {
+            try {
+                rs.next();
+                user.setLogin(rs.getString("login"));
+                user.setFio(rs.getString("fio"));
+            } catch (java.sql.SQLException e) {
+            }
+        }
+        return user;
     }
     public void saveUser(User user){
         UserDBService userDBService = new UserDBService();

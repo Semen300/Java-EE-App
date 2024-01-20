@@ -15,16 +15,17 @@ public class ContractService {
         ResultSet allContracts = contractDBService.allData();
         List<Contract> userContracts= new ArrayList<>();
         try{
-            while(allContracts.next()){
+            if(allContracts!=null) {
+                while (allContracts.next()) {
                     Contract contract = new Contract();
                     contract.setId(allContracts.getInt("id"));
                     contract.setName(allContracts.getString("name"));
                     contract.setDisc(allContracts.getString("disc"));
                     contract.setDeadline(allContracts.getString("deadline"));
                     contract.setExecLogin(allContracts.getString("execLogin"));
-                    userContracts.add(contract);
-                if(contract.getExecLog().equals(user.getLogin())) {
-                    userContracts.add(contract);
+                    if (contract.getExecLog().equals(user.getLogin())) {
+                        userContracts.add(contract);
+                    }
                 }
             }
         } catch(java.sql.SQLException e){}

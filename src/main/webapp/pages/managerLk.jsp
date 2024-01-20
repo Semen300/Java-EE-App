@@ -6,11 +6,23 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
     <title>managerLk</title>
 </head>
 <body>
-    Личный кабинет менеджера
+    Личный кабинет менеджера ${sessionScope.user_login}
+    <br>
+
+    Список пользователей:
+    <table border="1">
+    <c:forEach items="${requestScope.users}"  var="user">
+        <tr>
+            <td><a href="userInfo?login=${user.login}">${user.login}</a></td>
+            <td>${user.fio}</td>
+        </tr>
+    </c:forEach>
+    </table>
 </body>
 </html>

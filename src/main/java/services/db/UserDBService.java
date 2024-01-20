@@ -10,6 +10,12 @@ public class UserDBService {
         String request = "SELECT * from users";
         return dataBaseService.select(request);
     }
+
+    public ResultSet select(String login){
+        DataBaseService dataBaseService=new DataBaseService();
+        String request = "SELECT login, fio from users WHERE login='"+login+"'";
+        return dataBaseService.select(request);
+    }
     public Boolean create(User user){
         DataBaseService dataBaseService = new DataBaseService();
         String request = "INSERT INTO users (login, password, fio)" +

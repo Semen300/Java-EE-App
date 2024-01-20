@@ -18,7 +18,7 @@ http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 
     <servlet>
         <servlet-name>managerLk</servlet-name>
-        <jsp-file>/pages/managerLk.jsp</jsp-file>
+        <servlet-class>servlets.ManagerServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -27,13 +27,13 @@ http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>userLk</servlet-name>
-        <jsp-file>/pages/userLk.jsp</jsp-file>
+        <servlet-name>userServlet</servlet-name>
+        <servlet-class>servlets.UserServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>userLk</servlet-name>
-        <url-pattern>/userLk</url-pattern>
+        <servlet-name>userServlet</servlet-name>
+        <url-pattern>/userInfo</url-pattern>
     </servlet-mapping>
 
 </web-app>
