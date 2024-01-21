@@ -13,7 +13,7 @@
     <title>${sessionScope.user_login}</title>
 </head>
 <body>
-    Информация о пользователе ${requestScope.login}  <c:if test="${sessionScope.role==2}"> Изменить </c:if><br>
+Информация о пользователе ${requestScope.login}  <c:if test="${sessionScope.role==2}"> <a href="userInfo?action=update">Изменить</a> </c:if><br>
     Логин: ${requestScope.login}
     <br>
     ФИО: ${requestScope.fio}
@@ -23,7 +23,7 @@
     <table border="1">
     <c:forEach items="${requestScope.contracts}" var="contract">
         <tr>
-            <td>${contract.name}</td>
+            <td><a href="contractInfo?conId=${contract.id}">${contract.name}</a></td>
             <td>${contract.disc}</td>
             <td>${contract.deadline}</td>
         </tr>

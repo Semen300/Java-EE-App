@@ -11,7 +11,7 @@ public class Contract {
     private String execLogin;
 
     public Contract(){}
-    public Contract(int id, String name, String disc, String deadline, List<Task> tasks, String execLogin){
+    public Contract(int id, String name, String disc, String deadline, String execLogin){
         this.id=id;
         this.name=name;
         this.disc=disc;

@@ -36,4 +36,14 @@ http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
         <url-pattern>/userInfo</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>contractInfo</servlet-name>
+        <servlet-class>servlets.ContractServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>contractInfo</servlet-name>
+        <url-pattern>/contractInfo</url-pattern>
+    </servlet-mapping>
+
 </web-app>

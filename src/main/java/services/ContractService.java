@@ -31,6 +31,23 @@ public class ContractService {
         } catch(java.sql.SQLException e){}
         return userContracts;
     }
+
+    public Contract getContractById (int id){
+        ContractDBService contractDBService = new ContractDBService();
+        ResultSet rs = contractDBService.select(id);
+        Contract contract = new Contract();
+        try {
+            if (rs != null) {
+                rs.next();
+                contract.setId(rs.getInt("id"));
+                contract.setName(rs.getString("name"));
+                contract.setDisc(rs.getString("disc"));
+                contract.setDeadline(rs.getString("deadline"));
+                contract.setExecLogin(rs.getString("execLogin"));
+            }
+        } catch (java.sql.SQLException e){}
+        return contract;
+    }
     public void saveContract(Contract contract){
         ContractDBService contractDBService=new ContractDBService();
         contractDBService.create(contract);

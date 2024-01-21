@@ -25,7 +25,7 @@ public class UserDBService {
 
     public Boolean update(User user){
         DataBaseService dataBaseService = new DataBaseService();
-        String request = "UPDATE users SET password="+user.getPassword()+"', fio='"+user.getFio()+"' WHERE login='"+user.getLogin()+"'";
+        String request = "UPDATE users SET password='"+user.getPassword()+"', fio='"+user.getFio()+"' WHERE login='"+user.getLogin()+"'";
         return dataBaseService.update(request);
     }
 

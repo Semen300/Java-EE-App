@@ -7,10 +7,15 @@ import structure.User;
 public class ContractDBService {
     public ResultSet allData(){
         DataBaseService dataBaseService = new DataBaseService();
-        String sql = "SELECT * FROM contracts";
-        return dataBaseService.select(sql);
+        String request = "SELECT * FROM contracts";
+        return dataBaseService.select(request);
     }
 
+    public ResultSet select(int id){
+        DataBaseService dataBaseService = new DataBaseService();
+        String request = "SELECT * FROM contracts WHERE id='"+id+"'";
+        return dataBaseService.select(request);
+    }
     public Boolean create(Contract contract) {
         DataBaseService dataBaseService = new DataBaseService();
         String request = "INSERT INTO contracts (id, name, disc, deadline, execLogin)\n" +
