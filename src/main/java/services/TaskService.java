@@ -19,7 +19,7 @@ public class TaskService {
                 task.setId(allTasks.getInt("id"));
                 task.setName(allTasks.getString("name"));
                 task.setDisc(allTasks.getString("disc"));
-                task.setDeadline(allTasks.getString("deadline"));
+                task.setDeadline(allTasks.getDate("deadline"));
                 task.setConId(allTasks.getInt("conId"));
                 if(task.getConId()==contract.getId()){
                     tasksByContract.add(task);

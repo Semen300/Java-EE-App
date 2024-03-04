@@ -4,8 +4,22 @@ import services.db.DataBaseService;
 import java.sql.ResultSet;
 
 public class LoginDBService {
-    public String getPassByLogin(String login){
-        String request = "SELECT password FROM users WHERE login='"+login+"'";
+    public String getPassByLogin(int role, String login){
+        String request = null;
+        switch  (role){
+            case 1: {
+                request = "SELECT password FROM rabotyagi WHERE login='"+login+"'";
+                break;
+            }
+            case 2: {
+                request = "SELECT password FROM managers WHERE login='"+login+"'";
+                break;
+            }
+            case 3: {
+                request = "SELECT password FROM customers WHERE login='"+login+"'";
+                break;
+            }
+        }
         DataBaseService dataBaseService=new DataBaseService();
         ResultSet passwords= dataBaseService.select(request);
         String password = null;
@@ -17,14 +31,17 @@ public class LoginDBService {
     }
 
     public int getRoleByLogin(String login){
-        String request = "SELECT role FROM users WHERE login='"+login+"'";
+        String request1 = "SELECT * FROM rabotyagi WHERE login='"+login+"'";
+        String request2 = "SELECT * FROM managers WHERE login='"+login+"'";
+        String request3 = "SELECT * FROM customers WHERE login='"+login+"'";
         DataBaseService dataBaseService=new DataBaseService();
-        ResultSet roles= dataBaseService.select(request);
+        boolean is_worker = dataBaseService.exists(request1);
+        boolean is_manager = dataBaseService.exists(request2);
+        boolean is_customer = dataBaseService.exists(request3);
         int role = 0;
-        try{
-            roles.next();
-            role=roles.getInt("role");
-        } catch(java.sql.SQLException e){}
+        if(is_customer) role = 3;
+        else if(is_manager) role = 2;
+        else if(is_worker) role = 1;
         return role;
     }
 

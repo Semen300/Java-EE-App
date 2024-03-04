@@ -2,7 +2,7 @@ package services.db;
 
 import java.sql.ResultSet;
 import structure.Contract;
-import structure.User;
+import structure.Worker;
 
 public class ContractDBService {
     public ResultSet allData(){

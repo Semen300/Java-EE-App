@@ -8,7 +8,8 @@ public class LoginService {
         LoginDBService loginDBService=new LoginDBService();
         HashService hashService = new HashService();
         String hashedPass = hashService.createHash(password);
-        String pass = loginDBService.getPassByLogin(login);
+        int role = loginDBService.getRoleByLogin(login);
+        String pass = loginDBService.getPassByLogin(role, login);
         if(pass!=null && pass.equals(hashedPass)){
             return loginDBService.getRoleByLogin(login);
         }

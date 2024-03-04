@@ -74,4 +74,17 @@ public class DataBaseService {
         }
         return isSuccessful;
     }
+
+    public boolean exists(String sql){
+        Statement statement = null;
+        boolean is_esists = false;
+        try{
+            statement = getConnect().createStatement();
+            ResultSet rs = statement.executeQuery(sql);
+            rs.last();
+            int num = rs.getRow();
+            if(num>0) is_esists=true;
+        } catch(java.sql.SQLException e){}
+        return is_esists;
+    }
 }
