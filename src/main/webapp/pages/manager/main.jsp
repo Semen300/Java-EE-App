@@ -9,12 +9,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
-    <title>managerLk</title>
+    <title>Менеджер</title>
 </head>
 <body>
     Личный кабинет менеджера ${sessionScope.user_login}
     <br>
-
+    <%--
     Список пользователей:
     <table border="1">
     <c:forEach items="${requestScope.users}"  var="user">
@@ -24,5 +24,7 @@
         </tr>
     </c:forEach>
     </table>
+    --%>
+    <a href="login">Возврат на страницу авторизации</a>
 </body>
 </html>

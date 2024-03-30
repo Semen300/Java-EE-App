@@ -4,11 +4,12 @@ import services.db.DataBaseService;
 import java.sql.ResultSet;
 
 public class LoginDBService {
-    public String getPassByLogin(int role, String login){
+    public String getPassByLogin(String login){
+        int role = getRoleByLogin(login);
         String request = null;
         switch  (role){
             case 1: {
-                request = "SELECT password FROM rabotyagi WHERE login='"+login+"'";
+                request = "SELECT password FROM workers WHERE login='"+login+"'";
                 break;
             }
             case 2: {
@@ -23,15 +24,18 @@ public class LoginDBService {
         DataBaseService dataBaseService=new DataBaseService();
         ResultSet passwords= dataBaseService.select(request);
         String password = null;
-        try{
-            passwords.next();
-            password=passwords.getString("password");
-        } catch (java.sql.SQLException e){}
+        if(passwords!=null) {
+            try {
+                passwords.next();
+                password = passwords.getString("password");
+            } catch (java.sql.SQLException e) {
+            }
+        }
         return password;
     }
 
     public int getRoleByLogin(String login){
-        String request1 = "SELECT * FROM rabotyagi WHERE login='"+login+"'";
+        String request1 = "SELECT * FROM workers WHERE login='"+login+"'";
         String request2 = "SELECT * FROM managers WHERE login='"+login+"'";
         String request3 = "SELECT * FROM customers WHERE login='"+login+"'";
         DataBaseService dataBaseService=new DataBaseService();
@@ -68,5 +72,6 @@ public class LoginDBService {
         DataBaseService dataBaseService=new DataBaseService();
         dataBaseService.delete(request);
     }
+
 }
 

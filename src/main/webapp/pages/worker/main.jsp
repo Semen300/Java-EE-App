@@ -10,11 +10,12 @@
 
 <html>
 <head>
-    <title>${sessionScope.user_login}</title>
+    <title>Рабочий</title>
 </head>
 <body>
-Информация о пользователе ${requestScope.login}  <c:if test="${sessionScope.role==2}"> <a href="userInfo?action=update">Изменить</a> </c:if><br>
-    Логин: ${requestScope.login}
+    Информация о пользователе ${sessionScope.user_login} <br>
+    <a href="login">Возврат на страницу авторизации</a>
+    <%--Логин: ${requestScope.login}
     <br>
     ФИО: ${requestScope.fio}
     <br>
@@ -28,6 +29,6 @@
             <td>${contract.deadline}</td>
         </tr>
     </c:forEach>
-    </table>
+    </table> --%>
 </body>
 </html>

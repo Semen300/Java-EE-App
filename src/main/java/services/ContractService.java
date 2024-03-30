@@ -3,7 +3,7 @@ package services;
 import services.db.ContractDBService;
 import structure.Contract;
 import structure.Worker;
-import structure.Consumer;
+import structure.Customer;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public class ContractService {
         return userContracts;
     }
 
-    public List<Contract> getContractsByConsumer(Consumer consumer){
+    public List<Contract> getContractsByConsumer(Customer customer){
         ContractDBService contractDBService=new ContractDBService();
         ResultSet allContracts = contractDBService.allData();
         List<Contract> userContracts= new ArrayList<>();
@@ -48,7 +48,7 @@ public class ContractService {
                     contract.setDeadline(allContracts.getDate("deadline"));
                     contract.setExecLogin(allContracts.getString("execLogin"));
                     contract.setConsLogin(allContracts.getString("consLogin"));
-                    if (contract.getConsLogin().equals(consumer.getLogin())) {
+                    if (contract.getConsLogin().equals(customer.getLogin())) {
                         userContracts.add(contract);
                     }
                 }

@@ -1,11 +1,11 @@
 package structure;
 
-public class Consumer extends User{
+public class Customer extends User{
     private String number;
     private String email;
 
-    public Consumer(){}
-    public Consumer(String login, String password, String fio, String number, String email){
+    public Customer(){}
+    public Customer(String login, String password, String fio, String number, String email){
         super(login, password, fio);
         this.number=number;
         this.email=email;

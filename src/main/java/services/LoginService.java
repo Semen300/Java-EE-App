@@ -9,12 +9,13 @@ public class LoginService {
         HashService hashService = new HashService();
         String hashedPass = hashService.createHash(password);
         int role = loginDBService.getRoleByLogin(login);
-        String pass = loginDBService.getPassByLogin(role, login);
+        String pass = loginDBService.getPassByLogin(login);
         if(pass!=null && pass.equals(hashedPass)){
             return loginDBService.getRoleByLogin(login);
         }
         else return 0;
     }
+
 
     public String createSession(String login){
         LoginDBService loginDBService=new LoginDBService();
@@ -27,6 +28,7 @@ public class LoginService {
         LoginDBService loginDBService=new LoginDBService();
         return loginDBService.getLoginBySession(session);
     }
+
 
     public void logout(String login){
         LoginDBService loginDBService=new LoginDBService();

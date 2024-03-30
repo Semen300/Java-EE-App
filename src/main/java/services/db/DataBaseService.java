@@ -4,17 +4,18 @@ import java.sql.*;
 public class DataBaseService {
     private Connection getConnect(){
         try {
-            Class.forName("org.postgresql.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        final String url = "jdbc:postgresql://217.107.219.154:49307/bonch_2105569";
-        final String user = "bonch_2105569";
-        final String password = "imfuXXn9tPD7DnKf";
+        final String url = "jdbc:mysql://localhost:3306/java_curs_data?serverTimezone=Europe/Moscow&useSSL=false";
+        final String user = "root";
+        final String password = "root";
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(url, user, password);
         } catch (SQLException e) {
+           e.printStackTrace();
         }
         return conn;
     }

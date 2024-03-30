@@ -12,10 +12,7 @@ public class Worker extends User{
                 super(login, password, fio);
                 this.supLogin=supLogin;
         }
-        public Worker(HttpServletRequest req){
-                super.setLogin(req.getParameter("login"));
-                super.setPassword(req.getParameter("password"));
-        }
+
         @Override
         public String getLogin() {
                 return super.getLogin();

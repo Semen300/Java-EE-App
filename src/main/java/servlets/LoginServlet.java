@@ -7,62 +7,85 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import services.LoginService;
-import structure.Worker;
+import services.UserService;
+import structure.User;
 
 public class LoginServlet extends HttpServlet{
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if((req.getAttribute("operation")!=null)&&("login".equals(req.getAttribute("operation")))) {
-            req.setAttribute("errorText", "");
+        if((req.getParameter("action")!=null)&&(req.getParameter("action").equals("login"))) {
             req.getRequestDispatcher("/pages/login/login.jsp").forward(req, resp);
             resp.setContentType("text/html");
-        } // Переход на страницу входа при operation=login
-        else if((req.getAttribute("operation")!=null)&&("auth".equals(req.getAttribute("operation")))){
-            req.setAttribute("errorText", "");
-            req.getRequestDispatcher("/pages/login/new.jsp").forward(req, resp);
+        } // Переход на страницу входа при action=login
+        else if((req.getParameter("action")!=null)&&(req.getParameter("action").equals("auth"))){
+            req.getRequestDispatcher("/pages/login/auth.jsp").forward(req, resp);
             resp.setContentType("text/html");
-        } //Переход на страницу регистрации нового пользователя при operation=auth
+        } //Переход на страницу регистрации нового пользователя при action=auth
         else {
             req.setAttribute("errorText", "");
-            req.setAttribute("operation", "login");
             req.getRequestDispatcher("/pages/login/login.jsp").forward(req, resp);
         } //По усмолчанию переходим на страницу входа
     }
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Worker worker = new Worker(req);
-        LoginService loginService = new LoginService();
-        int role = loginService.auth(worker.getLogin(), worker.getPassword());
-        switch (role){
-            case 3:{
-                loginService.logout(worker.getLogin());
-                String session = loginService.createSession(worker.getLogin());
-                resp.addHeader("session",session);
-                req.getSession().setAttribute("name", session);
-                resp.sendRedirect(req.getContextPath() + "/consumer");
-                break;
-            }
-            case 2: {
-                loginService.logout(worker.getLogin());
-                String session = loginService.createSession(worker.getLogin());
-                resp.addHeader("session",session);
-                req.getSession().setAttribute("name", session);
-                resp.sendRedirect(req.getContextPath() + "/manager");
-                break;
-            }
-            case 1: {
-                loginService.logout(worker.getLogin());
-                String session = loginService.createSession(worker.getLogin());
-                resp.addHeader("session",session);
-                req.getSession().setAttribute("name", session);
-                resp.sendRedirect(req.getContextPath() + "/worker");
-                break;
-            }
-            default: {
-                req.setAttribute("errorText", "Неверный пароль");
-                resp.setContentType("text/html");
-                req.getRequestDispatcher("/pages/login/login.jsp").forward(req, resp);
+        if(req.getParameter("action").equals("login")) {
+            User user = new User(req);
+            LoginService loginService = new LoginService();
+            int role = loginService.auth(user.getLogin(), user.getPassword());
+            switch (role) {
+                case 3: {
+                    req.getSession().setAttribute("user_login", user.getLogin());
+                    resp.sendRedirect(req.getContextPath() + "/customer");
+                    break;
+                }
+                case 2: {
+                    req.getSession().setAttribute("user_login", user.getLogin());
+                    resp.sendRedirect(req.getContextPath() + "/manager");
+                    break;
+                }
+                case 1: {
+                    req.getSession().setAttribute("user_login", user.getLogin());
+                    resp.sendRedirect(req.getContextPath() + "/worker");
+                    break;
+                }
+                default: {
+                    req.setAttribute("errorText", "Неверный пароль или пользователь не существует");
+                    req.setAttribute("action", "login");
+                    resp.setContentType("text/html");
+                    req.getRequestDispatcher("/pages/login/login.jsp").forward(req, resp);
+                }
             }
         }
+        else if(req.getParameter("action").equals("auth")){
+            UserService userService = new UserService();
+            if(userService.in_system(req.getParameter("login"))){
+                req.setAttribute("errorText", "Пользователь с таким логином уже есть в системе");
+                req.getRequestDispatcher("/pages/login/auth.jsp").forward(req, resp);
+            }//Вывод ошибки о существовании пользователя на странице авторизации
+            else if(req.getParameter("login").equals("")) {
+                req.setAttribute("errorText", "Поле 'логин' не должно быть пустым");
+                req.getRequestDispatcher("/pages/login/auth.jsp").forward(req, resp);
+            }//Вывод ошибки о пустом поле логина на странице авторизации
+            else if(req.getParameter("password").equals("")){
+                req.setAttribute("errorText", "Поле 'пароль' не должно быть пустым");
+                req.getRequestDispatcher("/pages/login/auth.jsp").forward(req, resp);
+            }//Вывод ошибки о пустом поле пароля на странице авторизации
+            else{
+                if(
+                    userService.createCustomer(
+                            req.getParameter("login"),
+                            req.getParameter("password"),
+                            req.getParameter("fio"),
+                            req.getParameter("number"),
+                            req.getParameter("email")
+                    )
+                ) {
+                    req.setAttribute("errorText", "Пользователь успешно создан!");
+                } else
+                    req.setAttribute("errorText", "Произошла непредвиденная ошибка");
+                req.getRequestDispatcher("/pages/login/auth.jsp").forward(req, resp);
+            }
+        }
+        else resp.sendRedirect(req.getContextPath()+"/login?action=login");
     }
 }
