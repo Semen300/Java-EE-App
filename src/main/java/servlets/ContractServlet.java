@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.Date;
 
 import services.ContractService;
 import services.TaskService;
@@ -13,21 +14,35 @@ import structure.Contract;
 public class ContractServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ContractService contractService=new ContractService();
-        TaskService taskService = new TaskService();
-        int id = Integer.parseInt(req.getParameter("conId"));
-        Contract contract = contractService.getContractById(id);
-        req.setAttribute("conId", contract.getId());
-        req.setAttribute("conName", contract.getName());
-        req.setAttribute("userLogin", contract.getExecLog());
-        req.setAttribute("disc", contract.getDisc());
-        req.setAttribute("deadline", contract.getDeadline());
-        req.setAttribute("tasks", taskService.getTaskByContract(contract));
-        getServletContext().getRequestDispatcher("/pages/contractInfo.jsp").forward(req, resp);
+        String action = req.getParameter("action");
+        if(action!=null) {
+            switch (action) {
+                case "add": {
+                    req.getRequestDispatcher("pages/contract/add.jsp").forward(req, resp);
+                    break;
+                }
+                case "delete": {
+                    int id = Integer.parseInt(req.getParameter("id"));
+                    ContractService contractService = new ContractService();
+                    Contract contract = contractService.getContractById(id);
+                    contractService.deleteContract(contract);
+                    resp.sendRedirect(req.getContextPath() + "/customer");
+                    break;
+                }
+            }
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
+        if(req.getParameter("action").equals("add")){
+            ContractService contractService = new ContractService();
+            Contract contract = new Contract();
+            contract.setName(req.getParameter("name"));
+            contract.setDeadline(Date.valueOf(req.getParameter("deadline")));
+            contract.setConsLogin(req.getParameter("consLogin"));
+            contractService.saveContract(contract);
+            resp.sendRedirect(req.getContextPath()+"/customer?action=show");
+        }
     }
 }

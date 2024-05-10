@@ -1,10 +1,12 @@
 package services;
 
+import org.apache.taglibs.standard.lang.jstl.NullLiteral;
 import services.db.ContractDBService;
 import structure.Contract;
 import structure.Worker;
 import structure.Customer;
 
+import javax.lang.model.type.NullType;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +23,10 @@ public class ContractService {
                     Contract contract = new Contract();
                     contract.setId(allContracts.getInt("id"));
                     contract.setName(allContracts.getString("name"));
-                    contract.setDisc(allContracts.getString("disc"));
                     contract.setDeadline(allContracts.getDate("deadline"));
                     contract.setExecLogin(allContracts.getString("execLogin"));
                     contract.setConsLogin(allContracts.getString("consLogin"));
-                    if (contract.getExecLog().equals(worker.getLogin())) {
+                    if (contract.getExecLogin().equals(worker.getLogin())) {
                         userContracts.add(contract);
                     }
                 }
@@ -34,7 +35,7 @@ public class ContractService {
         return userContracts;
     }
 
-    public List<Contract> getContractsByConsumer(Customer customer){
+    public List<Contract> getContractsByConsumer(String Login){
         ContractDBService contractDBService=new ContractDBService();
         ResultSet allContracts = contractDBService.allData();
         List<Contract> userContracts= new ArrayList<>();
@@ -44,11 +45,11 @@ public class ContractService {
                     Contract contract = new Contract();
                     contract.setId(allContracts.getInt("id"));
                     contract.setName(allContracts.getString("name"));
-                    contract.setDisc(allContracts.getString("disc"));
                     contract.setDeadline(allContracts.getDate("deadline"));
                     contract.setExecLogin(allContracts.getString("execLogin"));
+                    if(contract.getExecLogin()==null){contract.setExecLogin("Не назначен");}
                     contract.setConsLogin(allContracts.getString("consLogin"));
-                    if (contract.getConsLogin().equals(customer.getLogin())) {
+                    if (contract.getConsLogin().equals(Login)) {
                         userContracts.add(contract);
                     }
                 }
@@ -66,7 +67,6 @@ public class ContractService {
                 rs.next();
                 contract.setId(rs.getInt("id"));
                 contract.setName(rs.getString("name"));
-                contract.setDisc(rs.getString("disc"));
                 contract.setDeadline(rs.getDate("deadline"));
                 contract.setExecLogin(rs.getString("execLogin"));
                 contract.setConsLogin(rs.getString("consLogin"));
@@ -85,7 +85,6 @@ public class ContractService {
                 Contract contract = new Contract();
                 contract.setId(rs.getInt("id"));
                 contract.setName(rs.getString("name"));
-                contract.setDisc(rs.getString("disc"));
                 contract.setDeadline(rs.getDate("deadline"));
                 contract.setExecLogin(rs.getString("execLogin"));
                 contract.setConsLogin(rs.getString("consLogin"));

@@ -12,7 +12,7 @@
     <title>Информация о контракте</title>
 </head>
 <body>
-  Информация о контракте № ${requestScope.conId} пользователя ${requestScope.userLogin}<br>
+  Информация о контракте № ${requestScope.conId} пользователя ${sessionScope.userLogin}<br>
   "${requestScope.conName}"<br>
   Описание:
   <br>

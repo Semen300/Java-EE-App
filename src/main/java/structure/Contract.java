@@ -1,5 +1,6 @@
 package structure;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Calendar;
 import java.sql.Date;
 import java.util.List;
@@ -8,23 +9,25 @@ public class Contract {
 
     private int id;
     private String name;
-    private String disc;
     private Date deadline;
     private String execLogin;
     private String consLogin;
     private List<Task> tasks;
 
     public Contract(){}
-    public Contract(int id, String name, String disc, Date deadline, String execLogin, String consLogin, List<Task> tasks){
+    public Contract(int id, String name, Date deadline, String execLogin, String consLogin, List<Task> tasks){
         this.id=id;
         this.name=name;
-        this.disc=disc;
         this.deadline=deadline;
         this.execLogin=execLogin;
         this.consLogin=consLogin;
         this.tasks=tasks;
     }
 
+    public Contract(HttpServletRequest req){
+        id=Integer.parseInt(req.getAttribute("id").toString());
+        name = req.getAttribute("name").toString();
+    }
     public int getId() {
         return id;
     }
@@ -39,12 +42,6 @@ public class Contract {
         name=newName;
     }
 
-    public String getDisc() {
-        return disc;
-    }
-    public void setDisc(String newDisc) {
-        disc=newDisc;
-    }
 
     public Date getDeadline() {
         return deadline;
@@ -53,7 +50,7 @@ public class Contract {
         deadline=newPRJDL;
     }
 
-    public String getExecLog() {
+    public String getExecLogin() {
         return execLogin;
     }
     public void setExecLogin(String newLogin) {

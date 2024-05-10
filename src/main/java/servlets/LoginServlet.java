@@ -34,17 +34,17 @@ public class LoginServlet extends HttpServlet{
             int role = loginService.auth(user.getLogin(), user.getPassword());
             switch (role) {
                 case 3: {
-                    req.getSession().setAttribute("user_login", user.getLogin());
-                    resp.sendRedirect(req.getContextPath() + "/customer");
+                    req.getSession().setAttribute("userLogin", user.getLogin());
+                    resp.sendRedirect(req.getContextPath() + "/customer?action=show");
                     break;
                 }
                 case 2: {
-                    req.getSession().setAttribute("user_login", user.getLogin());
+                    req.getSession().setAttribute("userLogin", user.getLogin());
                     resp.sendRedirect(req.getContextPath() + "/manager");
                     break;
                 }
                 case 1: {
-                    req.getSession().setAttribute("user_login", user.getLogin());
+                    req.getSession().setAttribute("userLogin", user.getLogin());
                     resp.sendRedirect(req.getContextPath() + "/worker");
                     break;
                 }

@@ -25,6 +25,11 @@ http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
         <servlet-name>worker</servlet-name>
         <jsp-file>/pages/worker/main.jsp</jsp-file>
     </servlet>
+    
+    <servlet>
+        <servlet-name>contract</servlet-name>
+        <servlet-class>servlets.ContractServlet</servlet-class>
+    </servlet>
 
     <servlet-mapping>
         <servlet-name>login</servlet-name>
@@ -44,5 +49,10 @@ http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
     <servlet-mapping>
         <servlet-name>worker</servlet-name>
         <url-pattern>/worker</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>contract</servlet-name>
+        <url-pattern>/contract</url-pattern>
     </servlet-mapping>
 </web-app>

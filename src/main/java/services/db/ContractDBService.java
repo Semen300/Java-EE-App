@@ -18,14 +18,14 @@ public class ContractDBService {
     }
     public Boolean create(Contract contract) {
         DataBaseService dataBaseService = new DataBaseService();
-        String request = "INSERT INTO contracts (id, name, disc, deadline, execLogin)\n" +
-                "VALUES ("+contract.getId()+",'"+contract.getName()+"','"+contract.getDisc()+"','"+contract.getDeadline()+"','"+contract.getExecLog()+"')";
+        String request = "INSERT INTO contracts (name, deadline, consLogin) " +
+                "VALUES ('"+contract.getName()+"','"+contract.getDeadline()+"','"+contract.getConsLogin()+"')";
         return dataBaseService.insert(request);
     }
 
     public Boolean update(Contract contract){
         DataBaseService dataBaseService = new DataBaseService();
-        String request = "UPDATE contracts SET name='" + contract.getName()+"',disc='"+contract.getDisc()+"',deadline='"+contract.getDeadline()+"',execLogin='"+contract.getExecLog()+"' WHERE id="+contract.getId();
+        String request = "UPDATE contracts SET name='" + contract.getName()+"',deadline='"+contract.getDeadline()+"',execLogin='"+contract.getExecLogin()+"' WHERE id="+contract.getId();
         return dataBaseService.update(request);
     }
     public Boolean delete(Contract contract){

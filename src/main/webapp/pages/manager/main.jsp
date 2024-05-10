@@ -12,7 +12,7 @@
     <title>Менеджер</title>
 </head>
 <body>
-    Личный кабинет менеджера ${sessionScope.user_login}
+    Личный кабинет менеджера ${sessionScope.userLogin}
     <br>
     <%--
     Список пользователей:
@@ -25,6 +25,6 @@
     </c:forEach>
     </table>
     --%>
-    <a href="login">Возврат на страницу авторизации</a>
+    <a href="login?action=login">Возврат на страницу авторизации</a>
 </body>
 </html>

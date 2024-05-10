@@ -21,10 +21,12 @@ public class DataBaseService {
     }
 
     public ResultSet select(String sql){
-        Statement statement = null;
         try {
-            statement = getConnect().createStatement();
-            return statement.executeQuery(sql);
+            Connection con = getConnect();
+            Statement statement = con.createStatement();
+            ResultSet rs = statement.executeQuery(sql);
+            //closeConnect(con);
+            return rs;
         } catch (SQLException throwables) {
             System.out.println(throwables.getMessage());
             return null;
@@ -33,13 +35,13 @@ public class DataBaseService {
 
     public boolean insert(String sql){
         boolean isSuccessful = false;
-        Statement statement = null;
         try {
-            statement = getConnect().createStatement();
-            int rowsAffected = statement.executeUpdate(sql);
+            Connection con = getConnect();
+            int rowsAffected = con.createStatement().executeUpdate(sql);
             if (rowsAffected > 0) {
                 isSuccessful = true;
             }
+            //closeConnect(con);
         } catch (Exception throwables) {
             throwables.printStackTrace();
         }
@@ -48,13 +50,13 @@ public class DataBaseService {
 
     public boolean update(String sql){
         boolean isSuccessful = false;
-        Statement statement = null;
         try{
-            statement = getConnect().createStatement();
-            int rowsAffected = statement.executeUpdate(sql);
+            Connection con = getConnect();
+            int rowsAffected = con.createStatement().executeUpdate(sql);
             if (rowsAffected > 0) {
                 isSuccessful = true;
             }
+            //closeConnect(con);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -63,10 +65,9 @@ public class DataBaseService {
 
     public boolean delete (String sql){
         boolean isSuccessful = false;
-        Statement statement = null;
         try {
-            statement = getConnect().createStatement();
-            int rowsAffected = statement.executeUpdate(sql);
+            Connection con = getConnect();
+            int rowsAffected = con.createStatement().executeUpdate(sql);
             if (rowsAffected > 0) {
                 isSuccessful = true;
             }
@@ -77,15 +78,24 @@ public class DataBaseService {
     }
 
     public boolean exists(String sql){
-        Statement statement = null;
         boolean is_esists = false;
         try{
-            statement = getConnect().createStatement();
-            ResultSet rs = statement.executeQuery(sql);
+            Connection con = getConnect();
+            ResultSet rs = con.createStatement().executeQuery(sql);
             rs.last();
             int num = rs.getRow();
             if(num>0) is_esists=true;
+            //closeConnect(con);
         } catch(java.sql.SQLException e){}
         return is_esists;
+    }
+
+    private void closeConnect(Connection connection){
+        try {
+            connection.close();
+        }
+        catch (java.sql.SQLException e){
+            e.printStackTrace();
+        }
     }
 }

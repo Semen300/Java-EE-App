@@ -11,7 +11,7 @@ public class LoginService {
         int role = loginDBService.getRoleByLogin(login);
         String pass = loginDBService.getPassByLogin(login);
         if(pass!=null && pass.equals(hashedPass)){
-            return loginDBService.getRoleByLogin(login);
+            return role;
         }
         else return 0;
     }

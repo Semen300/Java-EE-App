@@ -13,8 +13,8 @@
     <title>Рабочий</title>
 </head>
 <body>
-    Информация о пользователе ${sessionScope.user_login} <br>
-    <a href="login">Возврат на страницу авторизации</a>
+    Информация о пользователе ${sessionScope.userLogin} <br>
+    <a href="login?action=login">Возврат на страницу авторизации</a>
     <%--Логин: ${requestScope.login}
     <br>
     ФИО: ${requestScope.fio}
