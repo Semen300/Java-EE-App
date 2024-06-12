@@ -1,66 +1,80 @@
 package services;
 
-import org.apache.taglibs.standard.lang.jstl.NullLiteral;
-import services.db.ContractDBService;
 import structure.Contract;
+import structure.ContractM;
 import structure.Worker;
-import structure.Customer;
 
-import javax.lang.model.type.NullType;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ContractService {
 
-    public List<Contract> getContractsByWorker(Worker worker){
-        ContractDBService contractDBService=new ContractDBService();
-        ResultSet allContracts = contractDBService.allData();
-        List<Contract> userContracts= new ArrayList<>();
+    public List<ContractM> getContractsByManager(String managerLogin){
+        DataBaseService dataBaseService = new DataBaseService();
+        String request = "SELECT id, name, deadline, execLogin, consLogin, supLogin FROM (contracts LEFT JOIN workers ON contracts.execLogin=workers.login) where supLogin is NULL or supLogin='"+managerLogin+"'";
+        ResultSet resultSet = dataBaseService.select(request);
+        List<ContractM> contracts = new ArrayList<>();
         try{
-            if(allContracts!=null) {
-                while (allContracts.next()) {
-                    Contract contract = new Contract();
-                    contract.setId(allContracts.getInt("id"));
-                    contract.setName(allContracts.getString("name"));
-                    contract.setDeadline(allContracts.getDate("deadline"));
-                    contract.setExecLogin(allContracts.getString("execLogin"));
-                    contract.setConsLogin(allContracts.getString("consLogin"));
-                    if (contract.getExecLogin().equals(worker.getLogin())) {
-                        userContracts.add(contract);
-                    }
-                }
+            while(resultSet.next()){
+                ContractM contract = new ContractM(
+                        resultSet.getInt("id"),
+                        resultSet.getString("name"),
+                        resultSet.getDate("deadline"),
+                        resultSet.getString("execLogin")!=null?resultSet.getString("execLogin"):"Не назначен",
+                        resultSet.getString("consLogin"),
+                        resultSet.getString("supLogin")
+                );
+                contracts.add(contract);
             }
-        } catch(java.sql.SQLException e){}
-        return userContracts;
+        } catch (java.sql.SQLException e){}
+        return contracts;
+    }
+    public List<Contract> getContractsByWorker(String workerLogin) {
+        DataBaseService dataBaseService = new DataBaseService();
+        String request = "SELECT * FROM contracts WHERE execLogin='"+workerLogin+"'";
+        ResultSet resultSet = dataBaseService.select(request);
+        List<Contract> workerContracts = new ArrayList<>();
+        try {
+            while (resultSet.next()) {
+                Contract contract = new Contract(
+                        resultSet.getInt("id"),
+                        resultSet.getString("name"),
+                        resultSet.getDate("deadline"),
+                        resultSet.getString("execLogin"),
+                        resultSet.getString("consLogin")
+                );
+                workerContracts.add(contract);
+            }
+        }
+        catch (java.sql.SQLException e) {}
+        return workerContracts;
     }
 
-    public List<Contract> getContractsByConsumer(String Login){
-        ContractDBService contractDBService=new ContractDBService();
-        ResultSet allContracts = contractDBService.allData();
-        List<Contract> userContracts= new ArrayList<>();
+    public List<Contract> getContractsByCustomer(String Login){
+        DataBaseService dataBaseService = new DataBaseService();
+        String request = "SELECT * FROM contracts WHERE consLogin='"+Login+"'";
+        ResultSet resultSet = dataBaseService.select(request);
+        List<Contract> consContracts= new ArrayList<>();
         try{
-            if(allContracts!=null) {
-                while (allContracts.next()) {
-                    Contract contract = new Contract();
-                    contract.setId(allContracts.getInt("id"));
-                    contract.setName(allContracts.getString("name"));
-                    contract.setDeadline(allContracts.getDate("deadline"));
-                    contract.setExecLogin(allContracts.getString("execLogin"));
-                    if(contract.getExecLogin()==null){contract.setExecLogin("Не назначен");}
-                    contract.setConsLogin(allContracts.getString("consLogin"));
-                    if (contract.getConsLogin().equals(Login)) {
-                        userContracts.add(contract);
-                    }
-                }
+                while (resultSet.next()) {
+                    Contract contract = new Contract(
+                            resultSet.getInt("id"),
+                            resultSet.getString("name"),
+                            resultSet.getDate("deadline"),
+                            resultSet.getString("execLogin")!=null?resultSet.getString("execLogin"):"Не назначен",
+                            resultSet.getString("consLogin")
+                    );
+                    consContracts.add(contract);
             }
         } catch(java.sql.SQLException e){}
-        return userContracts;
+        return consContracts;
     }
 
     public Contract getContractById (int id){
-        ContractDBService contractDBService = new ContractDBService();
-        ResultSet rs = contractDBService.select(id);
+        DataBaseService dataBaseService = new DataBaseService();
+        String request = "SELECT * FROM contracts WHERE id='"+id+"'";
+        ResultSet rs = dataBaseService.select(request);
         Contract contract = new Contract();
         try {
             if (rs != null) {
@@ -74,37 +88,22 @@ public class ContractService {
         } catch (java.sql.SQLException e){}
         return contract;
     }
-
-    public List<Contract> getAllData (){
-        ContractDBService contractDBService=new ContractDBService();
-        List<Contract> contractList = new ArrayList<>();
-        ResultSet rs = contractDBService.allData();
-        try{
-            if(rs!=null){
-                rs.next();
-                Contract contract = new Contract();
-                contract.setId(rs.getInt("id"));
-                contract.setName(rs.getString("name"));
-                contract.setDeadline(rs.getDate("deadline"));
-                contract.setExecLogin(rs.getString("execLogin"));
-                contract.setConsLogin(rs.getString("consLogin"));
-                contractList.add(contract);
-            }
-        } catch (java.sql.SQLException e){};
-        return contractList;
-    }
-    public void saveContract(Contract contract){
-        ContractDBService contractDBService=new ContractDBService();
-        contractDBService.create(contract);
+    public boolean saveContract(Contract contract){
+        DataBaseService dataBaseService = new DataBaseService();
+        String request = "INSERT INTO contracts (name, deadline, consLogin) " +
+                "VALUES ('"+contract.getName()+"','"+contract.getDeadline()+"','"+contract.getConsLogin()+"')";
+        return dataBaseService.insert(request);
     }
 
-    public void updateContract(Contract contract){
-        ContractDBService contractDBService=new ContractDBService();
-        contractDBService.update(contract);
+    public boolean updateContract(Contract contract){
+        DataBaseService dataBaseService = new DataBaseService();
+        String request = "UPDATE contracts SET name='" + contract.getName()+"',deadline='"+contract.getDeadline()+"',execLogin='"+contract.getExecLogin()+"' WHERE id="+contract.getId();
+        return dataBaseService.update(request);
     }
 
-    public void deleteContract(Contract contract){
-        ContractDBService contractDBService=new ContractDBService();
-        contractDBService.delete(contract);
+    public boolean deleteContract(Contract contract){
+        DataBaseService dataBaseService = new DataBaseService();
+        String request = "DELETE FROM contracts WHERE id=" + contract.getId();
+        return dataBaseService.delete(request);
     }
 }

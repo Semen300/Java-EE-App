@@ -41,8 +41,15 @@ public class ContractServlet extends HttpServlet {
             contract.setName(req.getParameter("name"));
             contract.setDeadline(Date.valueOf(req.getParameter("deadline")));
             contract.setConsLogin(req.getParameter("consLogin"));
-            contractService.saveContract(contract);
-            resp.sendRedirect(req.getContextPath()+"/customer?action=show");
+            if(contract.getDeadline().getTime()<System.currentTimeMillis()){
+                req.setAttribute("errorText", "Дедлайн не может быть меньше текущей даты");
+                req.setAttribute("name", contract.getName());
+                req.getRequestDispatcher("pages/contract/add.jsp").forward(req,resp);
+            }
+            else {
+                contractService.saveContract(contract);
+                resp.sendRedirect(req.getContextPath() + "/customer?action=show");
+            }
         }
     }
 }

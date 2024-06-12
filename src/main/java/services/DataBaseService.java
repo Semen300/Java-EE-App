@@ -1,4 +1,4 @@
-package services.db;
+package services;
 import java.sql.*;
 
 public class DataBaseService {

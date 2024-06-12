@@ -10,7 +10,7 @@ public class Worker extends User{
         public Worker (){}
         public Worker (String login, String password, String fio, String supLogin){
                 super(login, password, fio);
-                this.supLogin=supLogin;
+                this.supLogin = supLogin;
         }
 
         @Override

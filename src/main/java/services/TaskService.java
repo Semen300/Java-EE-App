@@ -1,5 +1,4 @@
 package services;
-import services.db.TaskDBService;
 import structure.Task;
 import structure.Contract;
 
@@ -11,35 +10,39 @@ public class TaskService {
 
     public List<Task> getTaskByContract(Contract contract){
         List<Task> tasksByContract = new ArrayList<>();
-        TaskDBService taskDBService = new TaskDBService();
-        ResultSet allTasks=taskDBService.allData();
+        DataBaseService dataBaseService = new DataBaseService();
+        String request = "SELECT * FROM tasks WHERE conID="+contract.getId();
+        ResultSet resultSet = dataBaseService.select(request);
         try {
-            while (allTasks.next()) {
-                Task task = new Task();
-                task.setId(allTasks.getInt("id"));
-                task.setName(allTasks.getString("name"));
-                task.setDisc(allTasks.getString("disc"));
-                task.setDeadline(allTasks.getDate("deadline"));
-                task.setConId(allTasks.getInt("conId"));
-                if(task.getConId()==contract.getId()){
-                    tasksByContract.add(task);
+            while (resultSet.next()) {
+                Task task = new Task(
+                        resultSet.getInt("id"),
+                        resultSet.getString("name"),
+                        resultSet.getString("disc"),
+                        resultSet.getDate("deadline"),
+                        resultSet.getInt("conId"),
+                        resultSet.getBoolean("active")
+                );
                 }
-            }
-        }catch (java.sql.SQLException e){}
+            }catch (java.sql.SQLException e){}
         return tasksByContract;
     }
-    public void saveTask(Task task){
-        TaskDBService taskDBService = new TaskDBService();
-        taskDBService.create(task);
+    public boolean saveTask(Task task){
+        DataBaseService dataBaseService = new DataBaseService();
+        String request = "INSERT INTO tasks (id, name, disc, deadline, con_id)" +
+                "VALUES ('"+task.getId()+"','"+task.getName()+"', '"+task.getDisc()+"','"+task.getDeadline()+"','"+task.getConId()+"')";
+        return dataBaseService.insert(request);
     }
 
-    public void updateTask(Task task){
-        TaskDBService taskDBService = new TaskDBService();
-        taskDBService.update(task);
+    public boolean updateTask(Task task){
+        DataBaseService dataBaseService = new DataBaseService();
+        String request = "UPDATE tasks SET name='" + task.getName()+"',disc='"+task.getDisc()+"',deadline='"+task.getDeadline()+"',con_id='"+task.getConId()+"' WHERE id="+task.getId();
+        return dataBaseService.update(request);
     }
 
-    public void deleteTask(Task task){
-        TaskDBService taskDBService=new TaskDBService();
-        taskDBService.delete(task);
+    public boolean deleteTask(Task task){
+        DataBaseService dataBaseService = new DataBaseService();
+        String request = "DELETE FROM tasks where =" + task.getId();
+        return dataBaseService.delete(request);
     }
 }

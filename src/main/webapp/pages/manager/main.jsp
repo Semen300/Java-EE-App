@@ -14,17 +14,53 @@
 <body>
     Личный кабинет менеджера ${sessionScope.userLogin}
     <br>
-    <%--
-    Список пользователей:
-    <table border="1">
-    <c:forEach items="${requestScope.users}"  var="user">
+    <table width="100%">
         <tr>
-            <td><a href="userInfo?login=${user.login}">${user.login}</a></td>
-            <td>${user.fio}</td>
+            <td width="50%">Список рабочих, закрепленных за данным менеджером:</td>
+            <td width="50%">Список проектов, доступных данному менеджеру:</td>
         </tr>
-    </c:forEach>
     </table>
-    --%>
+    <table width="100%">
+        <tr>
+            <td width="50%">
+                <table border="1px">
+                    <c:forEach items="${requestScope.workers}" var="worker">
+                        <tr>
+                            <td>${worker.login}</td>
+                            <td>${worker.fio}</td>
+                        </tr>
+                    </c:forEach>
+                </table>
+            </td>
+            <td width="50%">
+                <table border="1px">
+                    <c:forEach items="${requestScope.contracts}" var="contract">
+                        <tr>
+                            <form method="post">
+                                <input type="hidden" name="id" value="${contract.id}">
+                                <td>${contract.name}</td>
+                                <td>${contract.deadline}</td>
+                                <td>
+                                    <select id="execLogin" name="execLogin">
+                                        <option value="">Не назначен</option>
+                                        <c:forEach items="${requestScope.workers}" var="worker">
+                                            <c:if test="${worker.login==contract.execLogin}"> <option value="${worker.login}" selected>${worker.fio}</option> </c:if>
+                                            <c:if test="${worker.login!=contract.execLogin}"> <option value="${worker.login}">${worker.fio}</option> </c:if>
+                                        </c:forEach>
+                                    </select>
+                                </td>
+                                <td>
+                                    <button type="submit">Назначить</button>
+                                </td>
+                            </form>
+                        </tr>
+                    </c:forEach>
+                </table>
+            </td>
+        </tr>
+    </table>
     <a href="login?action=login">Возврат на страницу авторизации</a>
 </body>
 </html>
+
+

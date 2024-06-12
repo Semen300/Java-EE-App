@@ -31,7 +31,7 @@ public class CustomerServlet extends  HttpServlet{
                 }//заввершение сесии, возврат к логину
                 default: {
                     ContractService contractService = new ContractService();
-                    List<Contract> Contracts = contractService.getContractsByConsumer(req.getSession().getAttribute("userLogin").toString());
+                    List<Contract> Contracts = contractService.getContractsByCustomer(req.getSession().getAttribute("userLogin").toString());
                     req.setAttribute("contracts", Contracts);
                     req.getRequestDispatcher("/pages/customer/main.jsp").forward(req, resp);
                 }
@@ -39,7 +39,7 @@ public class CustomerServlet extends  HttpServlet{
         }
         else{
             ContractService contractService = new ContractService();
-            List<Contract> Contracts = contractService.getContractsByConsumer(req.getSession().getAttribute("userLogin").toString());
+            List<Contract> Contracts = contractService.getContractsByCustomer(req.getSession().getAttribute("userLogin").toString());
             req.setAttribute("contracts", Contracts);
             req.getRequestDispatcher("/pages/customer/main.jsp").forward(req, resp);
         }

@@ -1,7 +1,6 @@
 package structure;
 
 public class Manager extends User{
-
     public Manager(){}
     public Manager(String login, String password, String fio){
         super(login, password, fio);

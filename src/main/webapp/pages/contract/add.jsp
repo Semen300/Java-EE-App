@@ -9,19 +9,19 @@
 <html>
 <head>
     <title>Новый контракт</title>
-    <script src="add.js"> </script>
 </head>
 <body>
     Добавление нового контракта
     <form method ="post" name="addform">
         <label>Имя проекта</label>
-        <input name="name" required> <br>
+        <input name="name" value="${requestScope.name}" required> <br>
         <label>Дедлайн:</label>
-        <input type="date" name="deadline" required>
+        <input type="date" value="${requestScope.name}" name="deadline" required>
         <input type="hidden" name="consLogin" value="${sessionScope.userLogin}">
         <br>
-        <button type="submit" onclick="check();"> Сохранить </button>
+        <button type="submit"> Сохранить </button>
         <input type="button" onclick="window.location='${pageContext.request.contextPath}/customer'" value="Отмена">
     </form>
+    <span>${requestScope.errorText}</span>
 </body>
 </html>

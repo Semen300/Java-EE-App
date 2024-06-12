@@ -1,7 +1,5 @@
 package services;
 
-import services.db.LoginDBService;
-import services.db.UserDBService;
 import structure.Customer;
 import structure.Worker;
 
@@ -12,10 +10,29 @@ import java.util.List;
 
 public class UserService {
 
+    public List<Worker> getWorkersByManager(String login){
+        List<Worker> workers = new ArrayList<>();
+        DataBaseService dataBaseService = new DataBaseService();
+        String request = "SELECT * FROM workers WHERE supLogin='"+login+"'";
+        ResultSet resultSet = dataBaseService.select(request);
+        try{
+            while(resultSet.next()){
+                Worker worker = new Worker(
+                        resultSet.getString("login"),
+                        "",
+                        resultSet.getString("fio"),
+                        ""
+                );
+                workers.add(worker);
+            }
+        } catch(java.sql.SQLException e) {}
+        return workers;
+    }
     public List<Worker> getAllWorkers(){
         List<Worker> workers=new ArrayList<>();
-        UserDBService userDBService=new UserDBService();
-        ResultSet Users = userDBService.allWorkers();
+        DataBaseService dataBaseService = new DataBaseService();
+        String request = "SELECT * FROM workers";
+        ResultSet Users = dataBaseService.select(request);
         try {
             while (Users.next()) {
                 Worker cur= new Worker();
@@ -30,28 +47,30 @@ public class UserService {
     }
 
     public Worker getWorkerByLogin(String login){
-        UserDBService userDBService=new UserDBService();
-        Worker user = new Worker();
-        ResultSet rs = userDBService.selectWorker(login);
+        Worker worker = new Worker();
+        DataBaseService dataBaseService=new DataBaseService();
+        String request = "SELECT login, fio, supLogin from workers WHERE login='"+login+"'";
+        ResultSet rs = dataBaseService.select(request);
         if(rs!=null) {
             try {
                 rs.next();
-                user.setLogin(rs.getString("login"));
-                user.setFio(rs.getString("fio"));
+                worker.setLogin(rs.getString("login"));
+                worker.setFio(rs.getString("fio"));
+                worker.setSupLogin(rs.getString("supLogin"));
             } catch (java.sql.SQLException e) {
             }
         }
-        return user;
+        return worker;
     }
 
     public boolean in_system(String login){
-        LoginDBService loginDBService=new LoginDBService();
-        return loginDBService.getRoleByLogin(login)!=0;
+        LoginService loginService=new LoginService();
+        return loginService.getRoleByLogin(login)!=0;
     }
 
     public boolean createCustomer(String login, String protopass, String fio, String number, String email){
         HashService hashService=new HashService();
-        UserDBService userDBService=new UserDBService();
+        DataBaseService dataBaseService = new DataBaseService();
         Customer customer = new Customer(
                 login,
                 hashService.createHash(protopass),
@@ -59,6 +78,8 @@ public class UserService {
                 number,
                 email
         );
-        return userDBService.createCustomer(customer);
+        String request = "INSERT INTO customers (login, password, fio, number, email)" +
+                "VALUES ('"+ customer.getLogin()+"', '"+ customer.getPassword()+"','"+ customer.getFio()+"','"+ customer.getNumber()+"','"+ customer.getEmail()+"')";
+        return dataBaseService.insert(request);
     }
 }

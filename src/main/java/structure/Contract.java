@@ -15,13 +15,12 @@ public class Contract {
     private List<Task> tasks;
 
     public Contract(){}
-    public Contract(int id, String name, Date deadline, String execLogin, String consLogin, List<Task> tasks){
+    public Contract(int id, String name, Date deadline, String execLogin, String consLogin){
         this.id=id;
         this.name=name;
         this.deadline=deadline;
         this.execLogin=execLogin;
         this.consLogin=consLogin;
-        this.tasks=tasks;
     }
 
     public Contract(HttpServletRequest req){
