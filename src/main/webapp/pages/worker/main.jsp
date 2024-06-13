@@ -13,22 +13,56 @@
     <title>Рабочий</title>
 </head>
 <body>
-    Информация о пользователе ${sessionScope.userLogin} <br>
-    <a href="login?action=login">Возврат на страницу авторизации</a>
-    <%--Логин: ${requestScope.login}
+    Личный кабинет сотрудника ${sessionScope.userLogin} <br>
     <br>
-    ФИО: ${requestScope.fio}
-    <br>
-    Список проектов:
-    <br>
-    <table border="1">
-    <c:forEach items="${requestScope.contracts}" var="contract">
+    <table width="100%">
         <tr>
-            <td><a href="contractInfo?conId=${contract.id}">${contract.name}</a></td>
-            <td>${contract.disc}</td>
-            <td>${contract.deadline}</td>
+            <td width="50%">Список проектов:</td>
+            <td width="50%">Состояние проекта:</td>
         </tr>
-    </c:forEach>
-    </table> --%>
+    </table>
+    <table width="100%">
+        <tr>
+            <td width="50%">
+                <table border="1">
+                    <c:forEach items="${requestScope.contracts}" var="contract">
+                    <tr>
+                        <td>${contract.name}</td>
+                        <td>${contract.deadline}</td>
+                        <c:if test="${param.action!='conInfo' || param.action=='conInfo' && param.id!=contract.id}">
+                            <td>
+                                <input type="button" value=">" onclick="window.location='${pageContext.request.contextPath}/worker?action=conInfo&id=${contract.id}'">
+                            </td>
+                        </c:if>
+                        <c:if test="${param.action=='conInfo' && param.id==contract.id}">
+                            <td>
+                                <input type="button" value="<" onclick="window.location='${pageContext.request.contextPath}/worker'">
+                            </td>
+                        </c:if>
+                    </tr>
+                    </c:forEach>
+                </table>
+            </td>
+            <td width="50%">
+                <c:if test="${requestScope.contract.name != null}">Контракт ${requestScope.contract.name}</c:if>
+                <table>
+                <c:forEach items="${requestScope.contract.tasks}" var="task">
+                    <tr>
+                        <td>${task.name}</td>
+                        <c:if test="${task.finished}"><td>Выполнен</td></c:if>
+                        <c:if test="${!task.finished}">
+                            <td>
+                                <input type="button" onclick="window.location='${pageContext.request.contextPath}/worker?action=setFinished&taskID=${task.id}'" value="Пометить выполненным">
+                            </td>
+                        </c:if>
+                    </tr>
+                </c:forEach>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <footer>
+        <a href="login?action=login">Возврат на страницу авторизации</a>
+    </footer>
 </body>
 </html>

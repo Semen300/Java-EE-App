@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.Date;
 import java.util.List;
 
 import services.ContractService;
@@ -16,19 +17,22 @@ public class CustomerServlet extends  HttpServlet{
         String action = req.getParameter("action");
         if(action!=null){
             switch(action) {
-                case "new": {
-                    resp.sendRedirect(req.getContextPath() + "/contract?action=add");
+                case "add": {
+                    req.getRequestDispatcher("pages/customer/add.jsp").forward(req, resp);
                     break;
-                }//переход к сервлету контракта, добавление
+                }
                 case "delete": {
-                    String id = req.getParameter("id");
-                    resp.sendRedirect(req.getContextPath() + "/contract?action=delete&id=" + id);
+                    int id = Integer.parseInt(req.getParameter("id"));
+                    ContractService contractService = new ContractService();
+                    Contract contract = contractService.getContractById(id);
+                    contractService.deleteContract(contract);
+                    resp.sendRedirect(req.getContextPath() + "/customer");
                     break;
-                }//переход к сервлету контракта, удаление
+                }
                 case "exit": {
                     resp.sendRedirect(req.getContextPath() + "/login?action=login");
                     break;
-                }//заввершение сесии, возврат к логину
+                }
                 default: {
                     ContractService contractService = new ContractService();
                     List<Contract> Contracts = contractService.getContractsByCustomer(req.getSession().getAttribute("userLogin").toString());
@@ -47,6 +51,24 @@ public class CustomerServlet extends  HttpServlet{
     }
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
-
+        if(req.getParameter("action").equals("add")){
+            ContractService contractService = new ContractService();
+            Contract contract = new Contract();
+            contract.setName(req.getParameter("name"));
+            contract.setDeadline(Date.valueOf(req.getParameter("deadline")));
+            contract.setConsLogin(req.getParameter("consLogin"));
+            if(contract.getDeadline().getTime()<System.currentTimeMillis()){
+                req.setAttribute("errorText", "Дедлайн не может быть меньше текущей даты");
+                req.setAttribute("name", contract.getName());
+                req.getRequestDispatcher("pages/contract/add.jsp").forward(req,resp);
+            }
+            else {
+                contractService.saveContract(contract);
+                resp.sendRedirect(req.getContextPath() + "/customer?action=show");
+            }
+        }
+        else if(req.getParameter("action").equals("add_task")){
+         //Дописать обавление тасков
+        }
     }
 }

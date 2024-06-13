@@ -12,7 +12,7 @@
 </head>
 <body>
     Добавление нового контракта
-    <form method ="post" name="addform">
+    <form method ="post">
         <label>Имя проекта</label>
         <input name="name" value="${requestScope.name}" required> <br>
         <label>Дедлайн:</label>

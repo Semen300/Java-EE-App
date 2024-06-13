@@ -59,7 +59,9 @@
             </td>
         </tr>
     </table>
-    <a href="login?action=login">Возврат на страницу авторизации</a>
+    <footer>
+        <a href="login?action=login">Возврат на страницу авторизации</a>
+    </footer>
 </body>
 </html>
 

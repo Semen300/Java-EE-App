@@ -13,23 +13,26 @@
 </head>
 <body>
     Личный кабинет заказчика ${sessionScope.userLogin} <br>
-    <a href="login?action=login">Возврат на страницу авторизации</a><br>
+
     Список контрактов:
     <table border="1">
         <tr>
             <td>Назавание контракта</td>
             <td>Имя исполнителя</td>
         </tr>
-    <c:forEach items="${requestScope.contracts}"  var="contract">
+        <c:forEach items="${requestScope.contracts}"  var="contract">
+            <tr>
+                <td>${contract.name}</td>
+                <td>${contract.execLogin}</td>
+                <td><input type="button" onclick="window.location='${pageContext.request.contextPath}/customer?action=delete&id=${contract.id}'" value="Удалить"></td>
+            </tr>
+        </c:forEach>
         <tr>
-            <td>${contract.name}</td>
-            <td>${contract.execLogin}</td>
-            <td><input type="button" onclick="window.location='${pageContext.request.contextPath}/customer?action=delete&id=${contract.id}'" value="Удалить"></td>
-    </tr>
-</c:forEach>
-    <tr>
-        <td><input type="button" onclick="window.location='${pageContext.request.contextPath}/customer?action=new'" value="Добавить"></td>
-    </tr>
-</table>
+            <td><input type="button" onclick="window.location='${pageContext.request.contextPath}/customer?action=add'" value="Добавить"></td>
+        </tr>
+    </table>
+<footer>
+    <a href="login?action=login">Возврат на страницу авторизации</a><br>
+</footer>
 </body>
 </html>
