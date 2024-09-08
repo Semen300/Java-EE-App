@@ -24,10 +24,13 @@ public class ManagerServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ContractService contractService = new ContractService();
-        int con_id=Integer.parseInt(req.getParameter("id"));
-        Contract contract = contractService.getContractById(con_id);
-        contract.setExecLogin(req.getParameter("execLogin"));
-        contractService.updateContract(contract);
+        if(req.getParameter("id")!=null) {
+            int conID=Integer.parseInt(req.getParameter("id"));
+            Contract contract = contractService.getContractById(conID);
+            contract.setExecLogin(req.getParameter("execLogin"));
+            contract.setStatus(2);
+            contractService.updateContract(contract);
+        }
         showManager(req, resp);
 
     }

@@ -44,20 +44,29 @@
                 </table>
             </td>
             <td width="50%">
-                <c:if test="${requestScope.contract.name != null}">Контракт ${requestScope.contract.name}</c:if>
-                <table>
-                <c:forEach items="${requestScope.contract.tasks}" var="task">
-                    <tr>
-                        <td>${task.name}</td>
-                        <c:if test="${task.finished}"><td>Выполнен</td></c:if>
-                        <c:if test="${!task.finished}">
-                            <td>
-                                <input type="button" onclick="window.location='${pageContext.request.contextPath}/worker?action=setFinished&taskID=${task.id}'" value="Пометить выполненным">
-                            </td>
-                        </c:if>
-                    </tr>
-                </c:forEach>
-                </table>
+                <c:if test="${requestScope.contract.name != null}">
+                    Контракт ${requestScope.contract.name}
+                    <table border="1">
+                        <tr>
+                            <td>Низвание задачи</td>
+                            <td>Предмет</td>
+                            <td>Количество</td>
+                        </tr>
+                        <c:forEach items="${requestScope.contract.tasks}" var="task">
+                            <tr>
+                                <td>${task.name} </td>
+                                <td>${task.item.name} </td>
+                                <td>${task.amount} </td>
+                                <c:if test="${task.finished}"><td>Выполнен</td></c:if>
+                                <c:if test="${!task.finished}">
+                                    <td>
+                                        <input type="button" onclick="window.location='${pageContext.request.contextPath}/worker?action=setFinished&taskID=${task.id}'" value="Пометить выполненным">
+                                    </td>
+                                </c:if>
+                            </tr>
+                        </c:forEach>
+                    </table>
+                </c:if>
             </td>
         </tr>
     </table>

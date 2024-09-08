@@ -34,9 +34,13 @@ public class WorkerServlet extends HttpServlet {
                         int taskID = Integer.parseInt(req.getParameter("taskID"));
                         Task task = taskService.getTaskByID(taskID);
                         taskService.setFinished(taskID);
-                        List<Task> tasks = taskService.getTaskByContract(task.getConId());
-                        Contract contract = contractService.getContractById(task.getConId());
+                        List<Task> tasks = taskService.getTaskByContract(task.getConID());
+                        Contract contract = contractService.getContractById(task.getConID());
                         contract.setTasks(tasks);
+                        if(contractService.getNumberOfUnfinishedTasks(contract.getId())==0){
+                            contract.setStatus(0);
+                            contractService.updateContract(contract);
+                        }
                         showWorker(req, resp, contract);
                     }
                     default:{

@@ -4,36 +4,67 @@ import java.sql.Date;
 public class Task {
     private int id;
     private String name;
-    private int conId;
+    private int conID;
+    private Item item;
+    private int amount;
     boolean finished;
 
     public Task(){}
 
-    public Task(int id, String name, int conId, boolean status){
-        this.id=id;
-        this.name=name;
-        this.conId=conId;
-        this.finished=status;
+    public Task(int id, String name, int conId, Item item, int amount, boolean status){
+        this.id = id;
+        this.name = name;
+        this.conID = conId;
+        this.item = item;
+        this.amount = amount;
+        this.finished = status;
     }
 
-    public void setId(int newId){
-        this.id=newId;
-    }
-    public int getId(){
+    public int getId() {
         return id;
     }
-    public void setName(String newName) {
-        this.name=newName;
+
+    public void setId(int id) {
+        this.id = id;
     }
+
     public String getName() {
         return name;
     }
-    public void setConId(int newConId){
-        this.conId=newConId;
+
+    public void setName(String name) {
+        this.name = name;
     }
-    public int getConId(){
-        return conId;
+
+    public int getConID() {
+        return conID;
     }
-    public boolean isFinished() {return finished;}
-    public void setFinished(boolean finished) {this.finished = finished;}
+
+    public void setConID(int conId) {
+        this.conID = conId;
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
+    }
 }

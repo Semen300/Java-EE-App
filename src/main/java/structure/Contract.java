@@ -12,15 +12,17 @@ public class Contract {
     private Date deadline;
     private String execLogin;
     private String consLogin;
+    private int status;
     private List<Task> tasks;
 
     public Contract(){}
-    public Contract(int id, String name, Date deadline, String execLogin, String consLogin){
-        this.id=id;
-        this.name=name;
-        this.deadline=deadline;
-        this.execLogin=execLogin;
-        this.consLogin=consLogin;
+    public Contract(int id, String name, Date deadline, String execLogin, String consLogin, int status){
+        this.id = id;
+        this.name = name;
+        this.deadline = deadline;
+        this.execLogin = execLogin;
+        this.consLogin = consLogin;
+        this.status = status;
     }
 
     public Contract(HttpServletRequest req){
@@ -62,6 +64,14 @@ public class Contract {
 
     public void setConsLogin(String consLogin) {
         this.consLogin = consLogin;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public List<Task> getTasks() {

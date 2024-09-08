@@ -15,16 +15,23 @@
     Личный кабинет заказчика ${sessionScope.userLogin} <br>
 
     Список контрактов:
-    <table border="1">
+    <table>
         <tr>
             <td>Назавание контракта</td>
             <td>Имя исполнителя</td>
+            <td>Статус</td>
         </tr>
         <c:forEach items="${requestScope.contracts}"  var="contract">
             <tr>
                 <td>${contract.name}</td>
                 <td>${contract.execLogin}</td>
+                <td>
+                <c:if test="${contract.status==0}">Завершён</c:if>
+                <c:if test="${contract.status==1}">Принят в работу</c:if>
+                <c:if test="${contract.status==2}">В работе</c:if>
+                </td>
                 <td><input type="button" onclick="window.location='${pageContext.request.contextPath}/customer?action=delete&id=${contract.id}'" value="Удалить"></td>
+                <c:if test="${contract.status==0}"><td><input type="button" onclick="window.location='${pageContext.request.contextPath}/customer?action=delete&id=${contract.id}'" value="Подтвердить получение"></td></c:if>
             </tr>
         </c:forEach>
         <tr>

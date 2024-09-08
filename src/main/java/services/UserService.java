@@ -13,6 +13,7 @@ public class UserService {
     public List<Worker> getWorkersByManager(String login){
         List<Worker> workers = new ArrayList<>();
         DataBaseService dataBaseService = new DataBaseService();
+        ContractService contractService = new ContractService();
         String request = "SELECT * FROM workers WHERE supLogin='"+login+"'";
         ResultSet resultSet = dataBaseService.select(request);
         try{
@@ -21,7 +22,8 @@ public class UserService {
                         resultSet.getString("login"),
                         "",
                         resultSet.getString("fio"),
-                        ""
+                        login,
+                        contractService.getNumberOfContractsByWorker(resultSet.getString("login"))
                 );
                 workers.add(worker);
             }

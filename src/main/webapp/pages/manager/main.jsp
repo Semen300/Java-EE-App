@@ -24,10 +24,16 @@
         <tr>
             <td width="50%">
                 <table border="1px">
+                    <tr>
+                        <td>Логин</td>
+                        <td>Фамилия И.О.</td>
+                        <td>Количество контрактов</td>
+                    </tr>
                     <c:forEach items="${requestScope.workers}" var="worker">
                         <tr>
                             <td>${worker.login}</td>
                             <td>${worker.fio}</td>
+                            <td>${worker.numberOfContracts}</td>
                         </tr>
                     </c:forEach>
                 </table>
@@ -42,7 +48,7 @@
                                 <td>${contract.deadline}</td>
                                 <td>
                                     <select id="execLogin" name="execLogin">
-                                        <option value="">Не назначен</option>
+                                        <c:if test="${contract.execLogin=='Не назначен'}"> <option value="" selected>Не назначен</option> </c:if>
                                         <c:forEach items="${requestScope.workers}" var="worker">
                                             <c:if test="${worker.login==contract.execLogin}"> <option value="${worker.login}" selected>${worker.fio}</option> </c:if>
                                             <c:if test="${worker.login!=contract.execLogin}"> <option value="${worker.login}">${worker.fio}</option> </c:if>

@@ -2,17 +2,42 @@ package services;
 
 import structure.Contract;
 import structure.ContractM;
+import structure.Task;
 import structure.Worker;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ContractService {
 
+    public List<Contract> getAllContracts(){
+        DataBaseService dataBaseService = new DataBaseService();
+        String request = "SELECT * FROM contracts";
+        ResultSet resultSet = dataBaseService.select(request);
+        List<Contract> contractList = new ArrayList<>();
+        try{
+            while(resultSet.next()){
+                contractList.add(
+                        new Contract(
+                                resultSet.getInt("id"),
+                                resultSet.getString("name"),
+                                resultSet.getDate("deadline"),
+                                resultSet.getString("execLogin"),
+                                resultSet.getString("consLogin"),
+                                resultSet.getInt("status")
+                        )
+                );
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return contractList;
+    }
     public List<ContractM> getContractsByManager(String managerLogin){
         DataBaseService dataBaseService = new DataBaseService();
-        String request = "SELECT id, name, deadline, execLogin, consLogin, supLogin FROM (contracts LEFT JOIN workers ON contracts.execLogin=workers.login) where supLogin is NULL or supLogin='"+managerLogin+"'";
+        String request = "SELECT id, name, deadline, execLogin, consLogin, supLogin, status FROM (contracts LEFT JOIN workers ON contracts.execLogin=workers.login) where supLogin is NULL or supLogin='"+managerLogin+"'";
         ResultSet resultSet = dataBaseService.select(request);
         List<ContractM> contracts = new ArrayList<>();
         try{
@@ -23,11 +48,14 @@ public class ContractService {
                         resultSet.getDate("deadline"),
                         resultSet.getString("execLogin")!=null?resultSet.getString("execLogin"):"Не назначен",
                         resultSet.getString("consLogin"),
-                        resultSet.getString("supLogin")
+                        resultSet.getString("supLogin"),
+                        resultSet.getInt("status")
                 );
                 contracts.add(contract);
             }
-        } catch (java.sql.SQLException e){}
+        } catch (java.sql.SQLException e){
+            e.printStackTrace();
+        }
         return contracts;
     }
     public List<Contract> getContractsByWorker(String workerLogin) {
@@ -42,12 +70,15 @@ public class ContractService {
                         resultSet.getString("name"),
                         resultSet.getDate("deadline"),
                         resultSet.getString("execLogin"),
-                        resultSet.getString("consLogin")
+                        resultSet.getString("consLogin"),
+                        resultSet.getInt("status")
                 );
                 workerContracts.add(contract);
             }
         }
-        catch (java.sql.SQLException e) {}
+        catch (java.sql.SQLException e) {
+            e.printStackTrace();
+        }
         return workerContracts;
     }
 
@@ -63,16 +94,20 @@ public class ContractService {
                             resultSet.getString("name"),
                             resultSet.getDate("deadline"),
                             resultSet.getString("execLogin")!=null?resultSet.getString("execLogin"):"Не назначен",
-                            resultSet.getString("consLogin")
+                            resultSet.getString("consLogin"),
+                            resultSet.getInt("status")
                     );
                     consContracts.add(contract);
             }
-        } catch(java.sql.SQLException e){}
+        } catch(java.sql.SQLException e){
+            e.printStackTrace();
+        }
         return consContracts;
     }
 
     public Contract getContractById (int id){
         DataBaseService dataBaseService = new DataBaseService();
+        TaskService taskService = new TaskService();
         String request = "SELECT * FROM contracts WHERE id='"+id+"'";
         ResultSet rs = dataBaseService.select(request);
         Contract contract = new Contract();
@@ -84,26 +119,73 @@ public class ContractService {
                 contract.setDeadline(rs.getDate("deadline"));
                 contract.setExecLogin(rs.getString("execLogin"));
                 contract.setConsLogin(rs.getString("consLogin"));
+                List<Task> tasks = taskService.getTaskByContract(contract.getId());
+                contract.setTasks(tasks);
             }
-        } catch (java.sql.SQLException e){}
+        } catch (java.sql.SQLException e){
+            e.printStackTrace();
+        }
         return contract;
     }
     public boolean saveContract(Contract contract){
         DataBaseService dataBaseService = new DataBaseService();
-        String request = "INSERT INTO contracts (name, deadline, consLogin) " +
-                "VALUES ('"+contract.getName()+"','"+contract.getDeadline()+"','"+contract.getConsLogin()+"')";
-        return dataBaseService.insert(request);
+        StringBuilder tasksRequest = new StringBuilder("INSERT INTO tasks (name, conID, itemID, amount) VALUES ");
+        for(Task task : contract.getTasks()){
+            tasksRequest.append("('").append(task.getName()).append("','").append(contract.getId()).append("','").append(task.getItem().getId()).append("','").append(task.getAmount()).append("')");
+        }
+        StringService.replaceAll(tasksRequest, ")(", "),(");
+        String contractRequest = "INSERT INTO contracts (id, name, deadline, consLogin, status) " +
+                "VALUES ('"+contract.getId()+"','"+contract.getName()+"','"+contract.getDeadline()+"','"+contract.getConsLogin()+"','"+contract.getStatus()+"')";
+        return dataBaseService.insert(contractRequest) && dataBaseService.insert(String.valueOf(tasksRequest));
     }
 
     public boolean updateContract(Contract contract){
         DataBaseService dataBaseService = new DataBaseService();
-        String request = "UPDATE contracts SET name='" + contract.getName()+"',deadline='"+contract.getDeadline()+"',execLogin='"+contract.getExecLogin()+"' WHERE id="+contract.getId();
+        String request = "UPDATE contracts SET name='" + contract.getName()+"',deadline='"+contract.getDeadline()+"',execLogin='"+contract.getExecLogin()+"',status='"+contract.getStatus()+"' WHERE id="+contract.getId();
         return dataBaseService.update(request);
     }
 
     public boolean deleteContract(Contract contract){
         DataBaseService dataBaseService = new DataBaseService();
-        String request = "DELETE FROM contracts WHERE id=" + contract.getId();
-        return dataBaseService.delete(request);
+        TaskService taskService = new TaskService();
+        if(contract.getTasks()!=null) {
+            for (Task task : contract.getTasks()) {
+                taskService.deleteTask(task);
+            }
+        }
+            String request = "DELETE FROM contracts WHERE id=" + contract.getId();
+            return dataBaseService.delete(request);
+    }
+
+    public int getLastID(){
+        int ID = 0;
+        DataBaseService dataBaseService = new DataBaseService();
+        String request = "SELECT * FROM contracts";
+        ResultSet resultSet = dataBaseService.select(request);
+        try {
+            if(resultSet.last()) {
+                ID = resultSet.getInt("id");
+            } else ID = 1;
+        } catch(SQLException e){
+            e.printStackTrace();
+        }
+        return ID;
+    }
+    public int getNumberOfContractsByWorker(String workerLogin){
+        int numberOfContracts=0;
+        List<Contract> contracts = getAllContracts();
+        for(Contract contract : contracts){
+            if(contract.getExecLogin()!=null && contract.getExecLogin().equals(workerLogin)) numberOfContracts++;
+        }
+        return numberOfContracts;
+    }
+    public int getNumberOfUnfinishedTasks(int contractID){
+        int numberOfUnfinishedTasks = 0;
+        TaskService taskService = new TaskService();
+        List<Task> taskList = taskService.getTaskByContract(contractID);
+        for(Task task : taskList){
+            if(!task.isFinished()) numberOfUnfinishedTasks++;
+        }
+        return numberOfUnfinishedTasks;
     }
 }
