@@ -12,16 +12,18 @@ public class Contract {
     private Date deadline;
     private String execLogin;
     private String consLogin;
+    private float percentOfCompletion;
     private int status;
     private List<Task> tasks;
 
     public Contract(){}
-    public Contract(int id, String name, Date deadline, String execLogin, String consLogin, int status){
+    public Contract(int id, String name, Date deadline, String execLogin, String consLogin, float percentOfCompletion, int status){
         this.id = id;
         this.name = name;
         this.deadline = deadline;
         this.execLogin = execLogin;
         this.consLogin = consLogin;
+        this.percentOfCompletion = percentOfCompletion;
         this.status = status;
     }
 
@@ -80,5 +82,13 @@ public class Contract {
 
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
+    }
+
+    public float getPercentOfCompletion() {
+        return percentOfCompletion;
+    }
+
+    public void setPercentOfCompletion(float percentOfCompletion) {
+        this.percentOfCompletion = percentOfCompletion;
     }
 }

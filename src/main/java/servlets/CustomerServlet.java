@@ -35,7 +35,6 @@ public class CustomerServlet extends  HttpServlet{
                     contractService.deleteContract(contract);
                     resp.sendRedirect(req.getContextPath() + "/customer");
                 }
-                case "exit" -> resp.sendRedirect(req.getContextPath() + "/login?action=login");
                 default -> {
                     ContractService contractService = new ContractService();
                     List<Contract> contracts = contractService.getContractsByCustomer(req.getSession().getAttribute("userLogin").toString());
@@ -71,6 +70,7 @@ public class CustomerServlet extends  HttpServlet{
             Date.valueOf(req.getParameter("deadline")),
             null,
             req.getParameter("consLogin"),
+            0,
             1
         );
         contract.setTasks(listOfTasks);

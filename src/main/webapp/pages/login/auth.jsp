@@ -9,6 +9,7 @@
 <html>
 <head>
     <title>Создание нового профиля заказчика</title>
+    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
 </head>
 <body>
     <form action = "" method="post">

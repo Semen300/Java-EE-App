@@ -10,6 +10,7 @@
 <html>
 <head>
     <title>Заказчик</title>
+    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
 </head>
 <body>
     Личный кабинет заказчика ${sessionScope.userLogin} <br>
@@ -20,6 +21,7 @@
             <td>Назавание контракта</td>
             <td>Имя исполнителя</td>
             <td>Статус</td>
+            <td>Завершен на</td>
         </tr>
         <c:forEach items="${requestScope.contracts}"  var="contract">
             <tr>
@@ -30,6 +32,7 @@
                 <c:if test="${contract.status==1}">Принят в работу</c:if>
                 <c:if test="${contract.status==2}">В работе</c:if>
                 </td>
+                <td>${contract.percentOfCompletion}%</td>
                 <td><input type="button" onclick="window.location='${pageContext.request.contextPath}/customer?action=delete&id=${contract.id}'" value="Удалить"></td>
                 <c:if test="${contract.status==0}"><td><input type="button" onclick="window.location='${pageContext.request.contextPath}/customer?action=delete&id=${contract.id}'" value="Подтвердить получение"></td></c:if>
             </tr>
@@ -39,7 +42,7 @@
         </tr>
     </table>
 <footer>
-    <a href="login?action=login">Возврат на страницу авторизации</a><br>
+    <a href="login?action=login">Возврат на страницу авторизации</a>
 </footer>
 </body>
 </html>

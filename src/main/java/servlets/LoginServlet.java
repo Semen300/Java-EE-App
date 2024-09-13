@@ -4,6 +4,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 import services.LoginService;
@@ -13,18 +14,19 @@ import structure.User;
 public class LoginServlet extends HttpServlet{
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.getSession().invalidate();
         if((req.getParameter("action")!=null)&&(req.getParameter("action").equals("login"))) {
             req.getRequestDispatcher("/pages/login/login.jsp").forward(req, resp);
             resp.setContentType("text/html");
-        } // Переход на страницу входа при action=login
+        }
         else if((req.getParameter("action")!=null)&&(req.getParameter("action").equals("auth"))){
             req.getRequestDispatcher("/pages/login/auth.jsp").forward(req, resp);
             resp.setContentType("text/html");
-        } //Переход на страницу регистрации нового пользователя при action=auth
+        }
         else {
             req.setAttribute("errorText", "");
             req.getRequestDispatcher("/pages/login/login.jsp").forward(req, resp);
-        } //По усмолчанию переходим на страницу входа
+        }
     }
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -34,17 +36,20 @@ public class LoginServlet extends HttpServlet{
             int role = loginService.auth(user.getLogin(), user.getPassword());
             switch (role) {
                 case 3: {
-                    req.getSession().setAttribute("userLogin", user.getLogin());
+                    HttpSession session = req.getSession();
+                    session.setAttribute("userLogin", user.getLogin());
                     resp.sendRedirect(req.getContextPath() + "/customer?action=show");
                     break;
                 }
                 case 2: {
-                    req.getSession().setAttribute("userLogin", user.getLogin());
+                    HttpSession session = req.getSession();
+                    session.setAttribute("userLogin", user.getLogin());
                     resp.sendRedirect(req.getContextPath() + "/manager");
                     break;
                 }
                 case 1: {
-                    req.getSession().setAttribute("userLogin", user.getLogin());
+                    HttpSession session = req.getSession();
+                    session.setAttribute("userLogin", user.getLogin());
                     resp.sendRedirect(req.getContextPath() + "/worker");
                     break;
                 }

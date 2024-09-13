@@ -11,6 +11,7 @@
 <html>
 <head>
     <title>Рабочий</title>
+    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
 </head>
 <body>
     Личный кабинет сотрудника ${sessionScope.userLogin} <br>

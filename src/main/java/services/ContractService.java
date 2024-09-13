@@ -17,6 +17,7 @@ public class ContractService {
         String request = "SELECT * FROM contracts";
         ResultSet resultSet = dataBaseService.select(request);
         List<Contract> contractList = new ArrayList<>();
+        ContractService contractService = new ContractService();
         try{
             while(resultSet.next()){
                 contractList.add(
@@ -26,6 +27,7 @@ public class ContractService {
                                 resultSet.getDate("deadline"),
                                 resultSet.getString("execLogin"),
                                 resultSet.getString("consLogin"),
+                                contractService.getPercentOfCompletion(resultSet.getInt("id")),
                                 resultSet.getInt("status")
                         )
                 );
@@ -40,6 +42,7 @@ public class ContractService {
         String request = "SELECT id, name, deadline, execLogin, consLogin, supLogin, status FROM (contracts LEFT JOIN workers ON contracts.execLogin=workers.login) where supLogin is NULL or supLogin='"+managerLogin+"'";
         ResultSet resultSet = dataBaseService.select(request);
         List<ContractM> contracts = new ArrayList<>();
+        ContractService contractService = new ContractService();
         try{
             while(resultSet.next()){
                 ContractM contract = new ContractM(
@@ -49,6 +52,7 @@ public class ContractService {
                         resultSet.getString("execLogin")!=null?resultSet.getString("execLogin"):"Не назначен",
                         resultSet.getString("consLogin"),
                         resultSet.getString("supLogin"),
+                        contractService.getPercentOfCompletion(resultSet.getInt("id")),
                         resultSet.getInt("status")
                 );
                 contracts.add(contract);
@@ -63,6 +67,7 @@ public class ContractService {
         String request = "SELECT * FROM contracts WHERE execLogin='"+workerLogin+"'";
         ResultSet resultSet = dataBaseService.select(request);
         List<Contract> workerContracts = new ArrayList<>();
+        ContractService contractService = new ContractService();
         try {
             while (resultSet.next()) {
                 Contract contract = new Contract(
@@ -71,6 +76,7 @@ public class ContractService {
                         resultSet.getDate("deadline"),
                         resultSet.getString("execLogin"),
                         resultSet.getString("consLogin"),
+                        contractService.getPercentOfCompletion(resultSet.getInt("id")),
                         resultSet.getInt("status")
                 );
                 workerContracts.add(contract);
@@ -87,6 +93,7 @@ public class ContractService {
         String request = "SELECT * FROM contracts WHERE consLogin='"+Login+"'";
         ResultSet resultSet = dataBaseService.select(request);
         List<Contract> consContracts= new ArrayList<>();
+        ContractService contractService = new ContractService();
         try{
                 while (resultSet.next()) {
                     Contract contract = new Contract(
@@ -95,6 +102,7 @@ public class ContractService {
                             resultSet.getDate("deadline"),
                             resultSet.getString("execLogin")!=null?resultSet.getString("execLogin"):"Не назначен",
                             resultSet.getString("consLogin"),
+                            contractService.getPercentOfCompletion(resultSet.getInt("id")),
                             resultSet.getInt("status")
                     );
                     consContracts.add(contract);
@@ -187,5 +195,26 @@ public class ContractService {
             if(!task.isFinished()) numberOfUnfinishedTasks++;
         }
         return numberOfUnfinishedTasks;
+    }
+
+    public float getPercentOfCompletion(int contractID){
+        String finishedRequest = "SELECT * FROM tasks WHERE finished = '1' AND conID='"+contractID+"'";
+        String allRequest = "SELECT * FROM tasks WHERE conID='"+contractID+"'";
+        int finishedAmount = 0;
+        int allAmount = 0;
+        DataBaseService dataBaseService = new DataBaseService();
+        ResultSet finishedRS = dataBaseService.select(finishedRequest);
+        ResultSet allRS = dataBaseService.select(allRequest);
+        try{
+            while(finishedRS.next()){
+                finishedAmount+=finishedRS.getInt("amount");
+            }
+            while(allRS.next()){
+                allAmount+=allRS.getInt("amount");
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return (float)finishedAmount / allAmount * 100;
     }
 }
