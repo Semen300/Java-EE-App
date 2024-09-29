@@ -10,7 +10,16 @@
 <html>
 <head>
     <title>Заказчик</title>
-    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
+    <script type="text/javascript" language="JavaScript">
+        function showConfirm(contextPath, id, refundSum, fullSum) {
+            const result =  confirm("Вы жействительно желаете удалить данный заказ? " +
+                "На основании степени его выполнения, " + refundSum + " из " + fullSum + " руб. будут возвращены");
+            if(result) {
+                window.location.href = contextPath + "/customer?action=delete&id=" + id;
+            }
+        }
+    </script>
 </head>
 <body>
     Личный кабинет заказчика ${sessionScope.userLogin} <br>
@@ -19,21 +28,33 @@
     <table>
         <tr>
             <td>Назавание контракта</td>
-            <td>Имя исполнителя</td>
+            <td>Сумма контракта</td>
             <td>Статус</td>
+            <td>Имя исполнителя</td>
             <td>Завершен на</td>
         </tr>
         <c:forEach items="${requestScope.contracts}"  var="contract">
             <tr>
                 <td>${contract.name}</td>
-                <td>${contract.execLogin}</td>
+                <td>${contract.price}</td>
                 <td>
-                <c:if test="${contract.status==0}">Завершён</c:if>
-                <c:if test="${contract.status==1}">Принят в работу</c:if>
-                <c:if test="${contract.status==2}">В работе</c:if>
+                    <c:if test="${contract.status==0}">Завершён</c:if>
+                    <c:if test="${contract.status==1}">Принят в работу</c:if>
+                    <c:if test="${contract.status==2}">В работе</c:if>
+                    <c:if test="${contract.status==3}">Ожидает оплаты</c:if>
+                </td>
+                <td>
+                    <c:if test="${contract.execLogin=='null'}">Не назначен</c:if>
+                    <c:if test="${contract.execLogin!='null'}">${contract.execLogin}</c:if>
                 </td>
                 <td>${contract.percentOfCompletion}%</td>
-                <td><input type="button" onclick="window.location='${pageContext.request.contextPath}/customer?action=delete&id=${contract.id}'" value="Удалить"></td>
+                <td>
+                    <c:if test="${contract.status==3}">
+                        <input type="button" onclick="window.location='${pageContext.request.contextPath}/customer?action=pay&id=${contract.id}'" value="Оплатить">
+                        <input type="button" onclick="window.location='${pageContext.request.contextPath}/customer?action=delete&id=${contract.id}'" value="Удалить">
+                    </c:if>
+                </td>
+                <td><c:if test="${contract.status!=3}"><input type="button" onclick="showConfirm('${pageContext.request.contextPath}', ${contract.id}, ${contract.priceOfUnfinished}, ${contract.price});" value="Удалить"></c:if></td>
                 <c:if test="${contract.status==0}"><td><input type="button" onclick="window.location='${pageContext.request.contextPath}/customer?action=delete&id=${contract.id}'" value="Подтвердить получение"></td></c:if>
             </tr>
         </c:forEach>

@@ -49,7 +49,7 @@
                                 <td>${contract.deadline}</td>
                                 <td>
                                     <select id="execLogin" name="execLogin">
-                                        <c:if test="${contract.execLogin=='Не назначен'}"> <option value="" selected>Не назначен</option> </c:if>
+                                        <c:if test="${contract.execLogin=='null'}"> <option value="" selected>Не назначен</option> </c:if>
                                         <c:forEach items="${requestScope.workers}" var="worker">
                                             <c:if test="${worker.login==contract.execLogin}"> <option value="${worker.login}" selected>${worker.fio}</option> </c:if>
                                             <c:if test="${worker.login!=contract.execLogin}"> <option value="${worker.login}">${worker.fio}</option> </c:if>

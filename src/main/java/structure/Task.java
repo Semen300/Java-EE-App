@@ -8,16 +8,18 @@ public class Task {
     private Item item;
     private int amount;
     boolean finished;
+    private float price;
 
     public Task(){}
 
-    public Task(int id, String name, int conId, Item item, int amount, boolean status){
+    public Task(int id, String name, int conId, Item item, int amount, boolean status, float price){
         this.id = id;
         this.name = name;
         this.conID = conId;
         this.item = item;
         this.amount = amount;
         this.finished = status;
+        this.price = price;
     }
 
     public int getId() {
@@ -66,5 +68,13 @@ public class Task {
 
     public void setItem(Item item) {
         this.item = item;
+    }
+
+    public float getPrice() {
+        return price;
+    }
+
+    public void setPrice(float price) {
+        this.price = price;
     }
 }

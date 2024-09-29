@@ -27,22 +27,26 @@ public class UserService {
                 );
                 workers.add(worker);
             }
-        } catch(java.sql.SQLException e) {}
+            resultSet.close();
+        } catch(java.sql.SQLException e) {
+            e.printStackTrace();
+        }
         return workers;
     }
     public List<Worker> getAllWorkers(){
         List<Worker> workers=new ArrayList<>();
         DataBaseService dataBaseService = new DataBaseService();
         String request = "SELECT * FROM workers";
-        ResultSet Users = dataBaseService.select(request);
+        ResultSet resultSet = dataBaseService.select(request);
         try {
-            while (Users.next()) {
+            while (resultSet.next()) {
                 Worker cur= new Worker();
-                cur.setLogin(Users.getString("login"));
-                cur.setFio(Users.getString("fio"));
+                cur.setLogin(resultSet.getString("login"));
+                cur.setFio(resultSet.getString("fio"));
                 workers.add(cur);
             }
-        } catch (SQLException | NullPointerException e){
+            resultSet.close();
+        } catch (SQLException e){
             e.printStackTrace();
         }
         return workers;
@@ -52,14 +56,16 @@ public class UserService {
         Worker worker = new Worker();
         DataBaseService dataBaseService=new DataBaseService();
         String request = "SELECT login, fio, supLogin from workers WHERE login='"+login+"'";
-        ResultSet rs = dataBaseService.select(request);
-        if(rs!=null) {
+        ResultSet resultSet = dataBaseService.select(request);
+        if(resultSet!=null) {
             try {
-                rs.next();
-                worker.setLogin(rs.getString("login"));
-                worker.setFio(rs.getString("fio"));
-                worker.setSupLogin(rs.getString("supLogin"));
+                resultSet.next();
+                worker.setLogin(resultSet.getString("login"));
+                worker.setFio(resultSet.getString("fio"));
+                worker.setSupLogin(resultSet.getString("supLogin"));
+                resultSet.close();
             } catch (java.sql.SQLException e) {
+                e.printStackTrace();
             }
         }
         return worker;
@@ -70,7 +76,7 @@ public class UserService {
         return loginService.getRoleByLogin(login)!=0;
     }
 
-    public boolean createCustomer(String login, String protopass, String fio, String number, String email){
+    public void createCustomer(String login, String protopass, String fio, String number, String email){
         HashService hashService=new HashService();
         DataBaseService dataBaseService = new DataBaseService();
         Customer customer = new Customer(
@@ -82,6 +88,6 @@ public class UserService {
         );
         String request = "INSERT INTO customers (login, password, fio, number, email)" +
                 "VALUES ('"+ customer.getLogin()+"', '"+ customer.getPassword()+"','"+ customer.getFio()+"','"+ customer.getNumber()+"','"+ customer.getEmail()+"')";
-        return dataBaseService.insert(request);
+        dataBaseService.insert(request);
     }
 }

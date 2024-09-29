@@ -3,10 +3,13 @@ package structure;
 public class Item {
     private int id;
     private String name;
+    private float price;
 
-    public Item(int id, String name){
-        this.id=id;
-        this.name=name;
+    public Item(){}
+    public Item(int id, String name, float price){
+        this.id = id;
+        this.name = name;
+        this.price = price;
     }
 
     public int getId() {
@@ -23,5 +26,13 @@ public class Item {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public float getPrice() {
+        return price;
+    }
+
+    public void setPrice(float price) {
+        this.price = price;
     }
 }

@@ -3,7 +3,6 @@ package services;
 import structure.Contract;
 import structure.ContractM;
 import structure.Task;
-import structure.Worker;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -28,18 +27,22 @@ public class ContractService {
                                 resultSet.getString("execLogin"),
                                 resultSet.getString("consLogin"),
                                 contractService.getPercentOfCompletion(resultSet.getInt("id")),
+                                resultSet.getFloat("price"),
+                                0,
                                 resultSet.getInt("status")
                         )
                 );
             }
+            resultSet.close();
         }catch(SQLException e){
             e.printStackTrace();
         }
+
         return contractList;
     }
     public List<ContractM> getContractsByManager(String managerLogin){
         DataBaseService dataBaseService = new DataBaseService();
-        String request = "SELECT id, name, deadline, execLogin, consLogin, supLogin, status FROM (contracts LEFT JOIN workers ON contracts.execLogin=workers.login) where supLogin is NULL or supLogin='"+managerLogin+"'";
+        String request = "SELECT id, name, deadline, execLogin, consLogin, supLogin, status, price FROM (contracts LEFT JOIN workers ON contracts.execLogin=workers.login) where supLogin is NULL or supLogin='"+managerLogin+"'";
         ResultSet resultSet = dataBaseService.select(request);
         List<ContractM> contracts = new ArrayList<>();
         ContractService contractService = new ContractService();
@@ -53,10 +56,15 @@ public class ContractService {
                         resultSet.getString("consLogin"),
                         resultSet.getString("supLogin"),
                         contractService.getPercentOfCompletion(resultSet.getInt("id")),
+                        resultSet.getFloat("price"),
+                        0,
                         resultSet.getInt("status")
                 );
-                contracts.add(contract);
+                if(contract.getStatus()!=3) {
+                    contracts.add(contract);
+                }
             }
+            resultSet.close();
         } catch (java.sql.SQLException e){
             e.printStackTrace();
         }
@@ -77,10 +85,13 @@ public class ContractService {
                         resultSet.getString("execLogin"),
                         resultSet.getString("consLogin"),
                         contractService.getPercentOfCompletion(resultSet.getInt("id")),
+                        resultSet.getFloat("price"),
+                        0,
                         resultSet.getInt("status")
                 );
                 workerContracts.add(contract);
             }
+            resultSet.close();
         }
         catch (java.sql.SQLException e) {
             e.printStackTrace();
@@ -103,10 +114,14 @@ public class ContractService {
                             resultSet.getString("execLogin")!=null?resultSet.getString("execLogin"):"Не назначен",
                             resultSet.getString("consLogin"),
                             contractService.getPercentOfCompletion(resultSet.getInt("id")),
+                            resultSet.getFloat("price"),
+                            getPriceOfUnfinished(resultSet.getInt("id")),
                             resultSet.getInt("status")
                     );
+
                     consContracts.add(contract);
             }
+            resultSet.close();
         } catch(java.sql.SQLException e){
             e.printStackTrace();
         }
@@ -117,43 +132,47 @@ public class ContractService {
         DataBaseService dataBaseService = new DataBaseService();
         TaskService taskService = new TaskService();
         String request = "SELECT * FROM contracts WHERE id='"+id+"'";
-        ResultSet rs = dataBaseService.select(request);
+        ResultSet resultSet = dataBaseService.select(request);
         Contract contract = new Contract();
         try {
-            if (rs != null) {
-                rs.next();
-                contract.setId(rs.getInt("id"));
-                contract.setName(rs.getString("name"));
-                contract.setDeadline(rs.getDate("deadline"));
-                contract.setExecLogin(rs.getString("execLogin"));
-                contract.setConsLogin(rs.getString("consLogin"));
+            if (resultSet != null) {
+                resultSet.next();
+                contract.setId(resultSet.getInt("id"));
+                contract.setName(resultSet.getString("name"));
+                contract.setDeadline(resultSet.getDate("deadline"));
+                contract.setExecLogin(resultSet.getString("execLogin"));
+                contract.setConsLogin(resultSet.getString("consLogin"));
+                contract.setPrice(resultSet.getFloat("price"));
+                contract.setPriceOfUnfinished(getPriceOfUnfinished(resultSet.getInt("id")));
                 List<Task> tasks = taskService.getTaskByContract(contract.getId());
                 contract.setTasks(tasks);
+                resultSet.close();
             }
         } catch (java.sql.SQLException e){
             e.printStackTrace();
         }
         return contract;
     }
-    public boolean saveContract(Contract contract){
+    public void saveContract(Contract contract){
         DataBaseService dataBaseService = new DataBaseService();
-        StringBuilder tasksRequest = new StringBuilder("INSERT INTO tasks (name, conID, itemID, amount) VALUES ");
+        StringBuilder tasksRequest = new StringBuilder("INSERT INTO tasks (name, conID, itemID, amount, price) VALUES ");
         for(Task task : contract.getTasks()){
-            tasksRequest.append("('").append(task.getName()).append("','").append(contract.getId()).append("','").append(task.getItem().getId()).append("','").append(task.getAmount()).append("')");
+            tasksRequest.append("('").append(task.getName()).append("','").append(contract.getId()).append("','").append(task.getItem().getId()).append("','").append(task.getAmount()).append("','").append(task.getPrice()).append("')");
         }
         StringService.replaceAll(tasksRequest, ")(", "),(");
-        String contractRequest = "INSERT INTO contracts (id, name, deadline, consLogin, status) " +
-                "VALUES ('"+contract.getId()+"','"+contract.getName()+"','"+contract.getDeadline()+"','"+contract.getConsLogin()+"','"+contract.getStatus()+"')";
-        return dataBaseService.insert(contractRequest) && dataBaseService.insert(String.valueOf(tasksRequest));
+        String contractRequest = "INSERT INTO contracts (id, name, deadline, consLogin, status, price) " +
+                "VALUES ('"+contract.getId()+"','"+contract.getName()+"','"+contract.getDeadline()+"','"+contract.getConsLogin()+"','"+contract.getStatus()+"','"+contract.getPrice()+"')";
+        dataBaseService.insert(contractRequest);
+        dataBaseService.insert(String.valueOf(tasksRequest));
     }
 
-    public boolean updateContract(Contract contract){
+    public void updateContract(Contract contract){
         DataBaseService dataBaseService = new DataBaseService();
         String request = "UPDATE contracts SET name='" + contract.getName()+"',deadline='"+contract.getDeadline()+"',execLogin='"+contract.getExecLogin()+"',status='"+contract.getStatus()+"' WHERE id="+contract.getId();
-        return dataBaseService.update(request);
+        dataBaseService.update(request);
     }
 
-    public boolean deleteContract(Contract contract){
+    public void deleteContract(Contract contract){
         DataBaseService dataBaseService = new DataBaseService();
         TaskService taskService = new TaskService();
         if(contract.getTasks()!=null) {
@@ -162,7 +181,7 @@ public class ContractService {
             }
         }
             String request = "DELETE FROM contracts WHERE id=" + contract.getId();
-            return dataBaseService.delete(request);
+        dataBaseService.delete(request);
     }
 
     public int getLastID(){
@@ -174,6 +193,7 @@ public class ContractService {
             if(resultSet.last()) {
                 ID = resultSet.getInt("id");
             } else ID = 1;
+            resultSet.close();
         } catch(SQLException e){
             e.printStackTrace();
         }
@@ -212,9 +232,27 @@ public class ContractService {
             while(allRS.next()){
                 allAmount+=allRS.getInt("amount");
             }
+            finishedRS.close();
+            allRS.close();
         }catch(SQLException e){
             e.printStackTrace();
         }
         return (float)finishedAmount / allAmount * 100;
+    }
+
+    public float getPriceOfUnfinished(int id){
+        String request = "SELECT * from tasks WHERE conID='"+id+"'" + " AND finished=0";
+        DataBaseService dataBaseService = new DataBaseService();
+        ResultSet tasksOfContract = dataBaseService.select(request);
+        float summ = 0;
+        try {
+            while (tasksOfContract.next()) {
+                summ+=tasksOfContract.getInt("price");
+            }
+            tasksOfContract.close();
+        } catch(SQLException e){
+            e.printStackTrace();
+        }
+        return summ;
     }
 }

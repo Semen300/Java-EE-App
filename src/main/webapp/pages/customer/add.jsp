@@ -31,11 +31,18 @@
             <td width="50%">
                 <center>Состав заказа</center>
                 <table border="1">
+                    <tr>
+                        <td>Наименование</td>
+                        <td>Цена за шт.</td>
+                        <td>Количество</td>
+                    </tr>
                     <c:forEach items="${requestScope.items}" var="item">
                         <tr>
                             <td>
-                                <input type="hidden" name="nameOf${item.id}" value="${item.name}">
                                 ${item.name}
+                            </td>
+                            <td>
+                                ${item.price}
                             </td>
                             <td>
                                 <input type="number" name="numberOf${item.id}" value="0" min="0">

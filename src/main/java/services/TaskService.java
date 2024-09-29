@@ -3,7 +3,6 @@ import structure.Item;
 import structure.Task;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,17 +17,19 @@ public class TaskService {
             while (resultSet.next()) {
                 int itemID = resultSet.getInt("itemID");
                 ItemService itemService = new ItemService();
-                Item item = new Item(itemID, itemService.getItemNameByID(itemID));
+                Item item = itemService.getItemByID(itemID);
                 Task task = new Task(
                         resultSet.getInt("id"),
                         resultSet.getString("name"),
                         resultSet.getInt("conId"),
                         item,
                         resultSet.getInt("amount"),
-                        resultSet.getBoolean("finished")
+                        resultSet.getBoolean("finished"),
+                        resultSet.getFloat("price")
                 );
                 tasksByContract.add(task);
                 }
+            resultSet.close();
             }catch (java.sql.SQLException e){
             e.printStackTrace();
         }
@@ -42,45 +43,55 @@ public class TaskService {
 
         try{
             if(resultSet.next()){
-                int itemID = resultSet.getInt("itemID");
                 ItemService itemService = new ItemService();
-                Item item = new Item(itemID, itemService.getItemNameByID(itemID));
-                return new Task(
+                Item item = itemService.getItemByID(resultSet.getInt("itemID"));
+                Task task = new Task(
                         resultSet.getInt("id"),
                         resultSet.getString("name"),
                         resultSet.getInt("conID"),
                         item,
                         resultSet.getInt("amount"),
-                        resultSet.getBoolean("finished")
+                        resultSet.getBoolean("finished"),
+                        resultSet.getFloat("price")
                 );
+                resultSet.close();
+                return task;
             }
         } catch (java.sql.SQLException e){
             e.printStackTrace();
         }
         return null;
     }
-    public boolean saveTask(Task task){
+
+    public float getAllPrice(List<Task> taskList){
+        float summ=0;
+        for(Task task : taskList){
+            summ+=task.getPrice();
+        }
+        return summ;
+    }
+    public void saveTask(Task task){
         DataBaseService dataBaseService = new DataBaseService();
         String request = "INSERT INTO tasks (id, name, conID, finished)" +
                 "VALUES ('"+task.getId()+"','"+task.getName()+"','"+task.getConID()+"','"+task.isFinished()+"')";
-        return dataBaseService.insert(request);
+        dataBaseService.insert(request);
     }
 
-    public boolean updateTask(Task task){
+    public void updateTask(Task task){
         DataBaseService dataBaseService = new DataBaseService();
         String request = "UPDATE tasks SET name='" + task.getName()+"',con_id='"+task.getConID()+"' finished="+task.isFinished()+" WHERE id="+task.getId();
-        return dataBaseService.update(request);
+        dataBaseService.update(request);
     }
-    public boolean setFinished (int taskID){
+    public void setFinished (int taskID){
         DataBaseService dataBaseService = new DataBaseService();
         String request = "UPDATE tasks SET finished=True WHERE id="+taskID;
-        return dataBaseService.update(request);
+        dataBaseService.update(request);
     }
 
-    public boolean deleteTask(Task task){
+    public void deleteTask(Task task){
         DataBaseService dataBaseService = new DataBaseService();
         String request = "DELETE FROM tasks where id=" + task.getId();
-        return dataBaseService.delete(request);
+        dataBaseService.delete(request);
     }
 
 }

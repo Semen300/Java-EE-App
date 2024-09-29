@@ -35,6 +35,14 @@ public class CustomerServlet extends  HttpServlet{
                     contractService.deleteContract(contract);
                     resp.sendRedirect(req.getContextPath() + "/customer");
                 }
+                case "pay" -> {
+                    int id = Integer.parseInt(req.getParameter("id"));
+                    ContractService contractService = new ContractService();
+                    Contract contract = contractService.getContractById(id);
+                    contract.setStatus(1);
+                    contractService.updateContract(contract);
+                    resp.sendRedirect(req.getContextPath() + "/customer");
+                }
                 default -> {
                     ContractService contractService = new ContractService();
                     List<Contract> contracts = contractService.getContractsByCustomer(req.getSession().getAttribute("userLogin").toString());
@@ -54,14 +62,15 @@ public class CustomerServlet extends  HttpServlet{
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
         ContractService contractService = new ContractService();
+        TaskService taskService = new TaskService();
         ItemService itemService = new ItemService();
         List<Task> listOfTasks = new ArrayList<>();
         int totalAmount = 0;
         for(int i=1; i<=itemService.getIDOfLastItem(); i++){
-            if(req.getParameter("nameOf"+i)!=null && Integer.parseInt(req.getParameter("numberOf" + i))!=0) {
-                Task task = new Task(-1,  req.getParameter("name")+ "-" + req.getParameter("nameOf"+i), -1, new Item(i,req.getParameter("nameOf"+i)), Integer.parseInt(req.getParameter("numberOf" + i)), false);
+            if(req.getParameter("numberOf"+i)!=null && Integer.parseInt(req.getParameter("numberOf" + i))!=0) {
+                Task task = new Task(-1,  req.getParameter("name")+ "-" + itemService.getItemByID(i).getName(), -1, itemService.getItemByID(i), Integer.parseInt(req.getParameter("numberOf" + i)), false, (float)Integer.parseInt(req.getParameter("numberOf" + i)) * itemService.getItemByID(i).getPrice());
                 listOfTasks.add(task);
-                totalAmount += Integer.parseInt(req.getParameter("numberOf" + i));
+                totalAmount += task.getAmount();
             }
         }
         Contract contract = new Contract(
@@ -71,7 +80,9 @@ public class CustomerServlet extends  HttpServlet{
             null,
             req.getParameter("consLogin"),
             0,
-            1
+            taskService.getAllPrice(listOfTasks),
+            0,
+            3
         );
         contract.setTasks(listOfTasks);
         if(totalAmount==0){
@@ -82,7 +93,7 @@ public class CustomerServlet extends  HttpServlet{
         }
         else {
             contractService.saveContract(contract);
-            resp.sendRedirect(req.getContextPath() + "/customer?action=show");
+            resp.sendRedirect(req.getContextPath() + "/customer");
         }
     }
 

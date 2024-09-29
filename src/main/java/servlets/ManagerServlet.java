@@ -32,7 +32,6 @@ public class ManagerServlet extends HttpServlet {
             contractService.updateContract(contract);
         }
         showManager(req, resp);
-
     }
     private void showManager(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         UserService userService = new UserService();

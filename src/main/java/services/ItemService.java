@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemService {
-
     public List<Item> getItems(){
         List<Item> catalogueOfItems = new ArrayList<>();
         DataBaseService dataBaseService = new DataBaseService();
@@ -16,27 +15,33 @@ public class ItemService {
         ResultSet resultSet = dataBaseService.select(request);
         try {
             while(resultSet.next()){
-                Item item = new Item(resultSet.getInt("id"),
-                        resultSet.getString("name"));
+                Item item = new Item(
+                        resultSet.getInt("id"),
+                        resultSet.getString("name"),
+                        resultSet.getFloat("price"));
                 catalogueOfItems.add(item);
             }
+            resultSet.close();
         } catch(SQLException e){
             e.printStackTrace();
         }
         return catalogueOfItems;
     }
-    public String getItemNameByID(int id){
-        String itemName = "";
+    public Item getItemByID(int id){
         DataBaseService dataBaseService = new DataBaseService();
         String request = "SELECT * FROM items WHERE id='"+id+"'";
         ResultSet resultSet = dataBaseService.select(request);
+        Item item = new Item();
         try{
             resultSet.last();
-            itemName = resultSet.getString("name");
+            item.setId(resultSet.getInt("id"));
+            item.setName(resultSet.getString("name"));
+            item.setPrice(resultSet.getFloat("price"));
+            resultSet.close();
         }catch(SQLException e){
             e.printStackTrace();
         }
-        return itemName;
+        return item;
     }
     public Integer getIDOfLastItem(){
         int lastID = 0;
@@ -46,6 +51,7 @@ public class ItemService {
         try {
             resultSet.last();
             lastID = resultSet.getInt("id");
+            resultSet.close();
         } catch(SQLException e){
             e.printStackTrace();
         }

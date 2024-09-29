@@ -45,7 +45,9 @@ public class LoginService {
             try {
                 passwords.next();
                 pass = passwords.getString("password");
+                passwords.close();
             } catch (java.sql.SQLException e) {
+                e.printStackTrace();
             }
         }
         if(pass!=null && pass.equals(hashedPass)){
@@ -71,6 +73,7 @@ public class LoginService {
         try{
             resultSet.next();
             login = resultSet.getString("login");
+            resultSet.close();
         } catch (java.sql.SQLException e) {}
         return login;
     }

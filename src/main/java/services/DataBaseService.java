@@ -1,4 +1,5 @@
 package services;
+
 import java.sql.*;
 
 public class DataBaseService {
@@ -24,78 +25,55 @@ public class DataBaseService {
         try {
             Connection con = getConnect();
             Statement statement = con.createStatement();
-            ResultSet rs = statement.executeQuery(sql);
-            //closeConnect(con);
-            return rs;
-        } catch (SQLException throwables) {
-            System.out.println(throwables.getMessage());
+            return statement.executeQuery(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
     }
 
-    public boolean insert(String sql){
-        boolean isSuccessful = false;
+    public void insert(String sql){
         try {
             Connection con = getConnect();
-            int rowsAffected = con.createStatement().executeUpdate(sql);
-            if (rowsAffected > 0) {
-                isSuccessful = true;
-            }
-            //closeConnect(con);
-        } catch (Exception throwables) {
-            throwables.printStackTrace();
+            con.createStatement().executeUpdate(sql);
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return isSuccessful;
     }
 
-    public boolean update(String sql){
-        boolean isSuccessful = false;
+    public void update(String sql){
         try{
             Connection con = getConnect();
-            int rowsAffected = con.createStatement().executeUpdate(sql);
-            if (rowsAffected > 0) {
-                isSuccessful = true;
-            }
-            //closeConnect(con);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            con.createStatement().executeUpdate(sql);
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return isSuccessful;
     }
 
-    public boolean delete (String sql){
-        boolean isSuccessful = false;
+    public void delete (String sql){
         try {
             Connection con = getConnect();
-            int rowsAffected = con.createStatement().executeUpdate(sql);
-            if (rowsAffected > 0) {
-                isSuccessful = true;
-            }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            con.createStatement().executeUpdate(sql);
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return isSuccessful;
     }
 
     public boolean exists(String sql){
-        boolean is_esists = false;
+        boolean is_exists = false;
         try{
             Connection con = getConnect();
             ResultSet rs = con.createStatement().executeQuery(sql);
             rs.last();
             int num = rs.getRow();
-            if(num>0) is_esists=true;
-            //closeConnect(con);
-        } catch(java.sql.SQLException e){}
-        return is_esists;
-    }
-
-    private void closeConnect(Connection connection){
-        try {
-            connection.close();
-        }
-        catch (java.sql.SQLException e){
+            if(num>0) is_exists=true;
+            con.close();
+        } catch(java.sql.SQLException e){
             e.printStackTrace();
         }
+        return is_exists;
     }
 }

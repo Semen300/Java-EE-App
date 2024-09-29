@@ -38,7 +38,7 @@ public class LoginServlet extends HttpServlet{
                 case 3: {
                     HttpSession session = req.getSession();
                     session.setAttribute("userLogin", user.getLogin());
-                    resp.sendRedirect(req.getContextPath() + "/customer?action=show");
+                    resp.sendRedirect(req.getContextPath() + "/customer");
                     break;
                 }
                 case 2: {
@@ -76,18 +76,13 @@ public class LoginServlet extends HttpServlet{
                 req.getRequestDispatcher("/pages/login/auth.jsp").forward(req, resp);
             }//Вывод ошибки о пустом поле пароля на странице авторизации
             else{
-                if(
                     userService.createCustomer(
                             req.getParameter("login"),
                             req.getParameter("password"),
                             req.getParameter("fio"),
                             req.getParameter("number"),
                             req.getParameter("email")
-                    )
-                ) {
-                    req.setAttribute("errorText", "Пользователь успешно создан!");
-                } else
-                    req.setAttribute("errorText", "Произошла непредвиденная ошибка");
+                    );
                 req.getRequestDispatcher("/pages/login/auth.jsp").forward(req, resp);
             }
         }
