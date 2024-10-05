@@ -16,11 +16,17 @@ public class AccessFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain next) throws ServletException, IOException {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
-        if(req.getParameter("id")!=null){
+        String path = req.getRequestURI();
+
+        if (!path.startsWith(req.getContextPath() + "/worker")) {
+            next.doFilter(request, response);
+            return;
+        }
+        else if(req.getParameter("id")!=null){
             int conID = Integer.parseInt(req.getParameter("id"));
             ContractService contractService = new ContractService();
             Contract contract = contractService.getContractById(conID);
-            if(!contract.getExecLogin().equals(req.getSession().getAttribute("userLogin"))){
+            if(contract.getId()==0 || !contract.getExecLogin().equals(req.getSession().getAttribute("userLogin"))){
                 req.getRequestDispatcher("pages/worker/accessError.jsp").forward(req, resp);
             }
         }

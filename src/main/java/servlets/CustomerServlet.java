@@ -66,16 +66,17 @@ public class CustomerServlet extends  HttpServlet{
         ItemService itemService = new ItemService();
         List<Task> listOfTasks = new ArrayList<>();
         int totalAmount = 0;
+        int id = contractService.getLastID()+1;
         for(int i=1; i<=itemService.getIDOfLastItem(); i++){
-            if(req.getParameter("numberOf"+i)!=null && Integer.parseInt(req.getParameter("numberOf" + i))!=0) {
-                Task task = new Task(-1,  req.getParameter("name")+ "-" + itemService.getItemByID(i).getName(), -1, itemService.getItemByID(i), Integer.parseInt(req.getParameter("numberOf" + i)), false, (float)Integer.parseInt(req.getParameter("numberOf" + i)) * itemService.getItemByID(i).getPrice());
+            if(!req.getParameter("numberOf"+i).equals("") && Integer.parseInt(req.getParameter("numberOf" + i))!=0) {
+                Task task = new Task(-1,  "Контракт"+id+ "-" + itemService.getItemByID(i).getName(), -1, itemService.getItemByID(i), Integer.parseInt(req.getParameter("numberOf" + i)), false, (float)Integer.parseInt(req.getParameter("numberOf" + i)) * itemService.getItemByID(i).getPrice());
                 listOfTasks.add(task);
                 totalAmount += task.getAmount();
             }
         }
         Contract contract = new Contract(
-            contractService.getLastID()+1,
-            req.getParameter("name"),
+            id,
+            "Контракт" + id,
             Date.valueOf(req.getParameter("deadline")),
             null,
             req.getParameter("consLogin"),

@@ -108,15 +108,15 @@
                 </tr>
                 </thead>
                 <tbody>
-                    <c:forEach items="${requestScope.contracts}" var="contract">
+                    <c:forEach items="${requestScope.contracts}" var="oneOfContract">
                         <tr>
-                            <td>${contract.name}</td>
-                            <td>${contract.deadline}</td>
+                            <td>${oneOfContract.name}</td>
+                            <td>${oneOfContract.deadline}</td>
                             <td class="action-column">
-                            <c:if test="${param.action!='conInfo' || param.action=='conInfo' && param.id!=contract.id}">
-                                <input class="action-btn" type="button" value=">" onclick="window.location='${pageContext.request.contextPath}/worker?action=conInfo&id=${contract.id}'">
+                            <c:if test="${oneOfContract.id!=requestScope.contract.id}">
+                                <input class="action-btn" type="button" value=">" onclick="window.location='${pageContext.request.contextPath}/worker?action=conInfo&id=${oneOfContract.id}'">
                             </c:if>
-                            <c:if test="${param.action=='conInfo' && param.id==contract.id}">
+                            <c:if test="${oneOfContract.id==requestScope.contract.id}">
                                 <input class="action-btn" type="button" value="<" onclick="window.location='${pageContext.request.contextPath}/worker'">
                             </c:if>
                             </td>

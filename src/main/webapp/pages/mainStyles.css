@@ -34,6 +34,10 @@ h1 {
     margin: 0;
 }
 
+h5 {
+   margin: 5px;
+}
+
 .logout-btn {
     background-color: #ff4d4d;
     color: white;

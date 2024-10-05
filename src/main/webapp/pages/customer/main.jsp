@@ -118,14 +118,12 @@
                     </td>
                     <td>${contract.percentOfCompletion}%</td>
                     <td class="action-column">
-                        <c:choose>
-                            <c:when test="${contract.status==3}">
-                                <input class="action-btn" type="button" onclick="window.location='${pageContext.request.contextPath}/customer?action=pay&id=${contract.id}'" value="Оплатить">
-                                <input class="action-btn" type="button" onclick="window.location='${pageContext.request.contextPath}/customer?action=delete&id=${contract.id}'" value="Удалить">
-                            </c:when>
-                            <c:when test="${contract.status!=3}"><input type="button" class="action-btn" onclick="showConfirm('${pageContext.request.contextPath}', ${contract.id}, ${contract.priceOfUnfinished}, ${contract.price});" value="Удалить"></c:when>
-                            <c:when test="${contract.status==0}"><input type="button" class="action-btn" onclick="window.location='${pageContext.request.contextPath}/customer?action=delete&id=${contract.id}'" value="Подтвердить получение"></c:when>
-                        </c:choose>
+                        <c:if test="${contract.status==3}">
+                            <input class="action-btn" type="button" onclick="window.location='${pageContext.request.contextPath}/customer?action=delete&id=${contract.id}'" value="Удалить">
+                            <input class="action-btn" type="button" onclick="window.location='${pageContext.request.contextPath}/customer?action=pay&id=${contract.id}'" value="Оплатить">
+                        </c:if>
+                        <c:if test="${contract.status!=3}"><input type="button" class="action-btn" onclick="showConfirm('${pageContext.request.contextPath}', ${contract.id}, ${contract.priceOfUnfinished}, ${contract.price});" value="Удалить"></c:if>
+                        <c:if test="${contract.status==0}"><input type="button" class="action-btn" onclick="window.location='${pageContext.request.contextPath}/customer?action=delete&id=${contract.id}'" value="Подтвердить получение"></c:if>
                     </td>
 
                     </tr>

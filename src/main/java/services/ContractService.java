@@ -135,8 +135,7 @@ public class ContractService {
         ResultSet resultSet = dataBaseService.select(request);
         Contract contract = new Contract();
         try {
-            if (resultSet != null) {
-                resultSet.next();
+            if (resultSet.next()) {
                 contract.setId(resultSet.getInt("id"));
                 contract.setName(resultSet.getString("name"));
                 contract.setDeadline(resultSet.getDate("deadline"));
@@ -153,6 +152,7 @@ public class ContractService {
         }
         return contract;
     }
+
     public void saveContract(Contract contract){
         DataBaseService dataBaseService = new DataBaseService();
         StringBuilder tasksRequest = new StringBuilder("INSERT INTO tasks (name, conID, itemID, amount, price) VALUES ");

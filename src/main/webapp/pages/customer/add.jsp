@@ -79,8 +79,10 @@
     <form method="post">
         <div class="content-container">
             <div class="block">
-                <input name="name" type="text" placeholder="Название" value="${requestScope.name}" required autocomplete="off">
+                <h5>Дедлайн</h5>
+                <label>
                 <input name="deadline" type="date" value="${requestScope.deadline}" required>
+                </label>
                 <input type="hidden" name="consLogin" value="${sessionScope.userLogin}" required>
                 <div class="error-message" id="error-message">${requestScope.errorText}</div>
             </div>
@@ -104,7 +106,7 @@
                                     ${item.price}
                                 </td>
                                 <td class="action-column">
-                                    <input type="number" name="numberOf${item.id}" value="0" min="0">
+                                    <input type="number" name="numberOf${item.id}" value="0" min="0" required>
                                 </td>
                             </tr>
                         </c:forEach>
