@@ -4,7 +4,7 @@
   Date: 23.04.2024
   Time: 9:43
   To change this template use File | Settings | File Templates.
---%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
@@ -57,3 +57,68 @@
     <span>${requestScope.errorText}</span>
 </body>
 </html>
+--%>
+
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новый заказ</title>
+    <style>
+        <%@include file="/pages/mainStyles.css"%>
+    </style>
+</head>
+<body>
+<div class="container" id="container">
+    <header>
+        <h1>Добавление заказа</h1>
+    </header>
+
+    <form method="post">
+        <div class="content-container">
+            <div class="block">
+                <input name="name" type="text" placeholder="Название" value="${requestScope.name}" required autocomplete="off">
+                <input name="deadline" type="date" value="${requestScope.deadline}" required>
+                <input type="hidden" name="consLogin" value="${sessionScope.userLogin}" required>
+                <div class="error-message" id="error-message">${requestScope.errorText}</div>
+            </div>
+
+            <div class="block">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Наименование</th>
+                            <th>Цена за шт.</th>
+                            <th>Количество</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="${requestScope.items}" var="item">
+                            <tr>
+                                <td>
+                                    ${item.name}
+                                </td>
+                                <td>
+                                    ${item.price}
+                                </td>
+                                <td class="action-column">
+                                    <input type="number" name="numberOf${item.id}" value="0" min="0">
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <button class="add-btn" type="submit" id="bottom-button1">Сохранить</button>
+        <button class="add-btn" id="bottom-button2" onclick="window.location='${pageContext.request.contextPath}/customer'">Отмена</button>
+    </form>
+</div>
+<script>
+
+</script>
+</body>
+</html>
+

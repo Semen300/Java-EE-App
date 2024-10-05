@@ -16,9 +16,8 @@ import java.util.List;
 public class ManagerServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        showManager(req, resp);
         req.setAttribute("errorText", "");
-        req.getRequestDispatcher("/pages/customer/main.jsp").forward(req, resp);
+        showManager(req, resp);
     }
 
     @Override
