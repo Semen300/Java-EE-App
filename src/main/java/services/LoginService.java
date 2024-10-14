@@ -55,33 +55,4 @@ public class LoginService {
         }
         else return 0;
     }
-
-
-    public String createSession(String login){
-        DataBaseService dataBaseService=new DataBaseService();
-        HashService hashService = new HashService();
-        String session = hashService.createHash(login+new Date());
-        String request = "INSERT INTO sessions (login, session) values ('"+login+"','"+session+"')";
-        dataBaseService.insert(request);
-        return session;
-    }
-    public String getLoginBySession(String session){
-        DataBaseService dataBaseService = new DataBaseService();
-        String request = "SELECT login FROM sessions WHERE session = '"+session+"'";
-        ResultSet resultSet = dataBaseService.select(request);
-        String login = null;
-        try{
-            resultSet.next();
-            login = resultSet.getString("login");
-            resultSet.close();
-        } catch (java.sql.SQLException e) {}
-        return login;
-    }
-
-
-    public void logout(String login){
-        DataBaseService dataBaseService=new DataBaseService();
-        String request = "DELETE FROM sessions WHERE login = '"+login+"'";
-        dataBaseService.delete(request);
-    }
 }

@@ -4,7 +4,6 @@ import structure.Customer;
 import structure.Worker;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,44 +32,6 @@ public class UserService {
         }
         return workers;
     }
-    public List<Worker> getAllWorkers(){
-        List<Worker> workers=new ArrayList<>();
-        DataBaseService dataBaseService = new DataBaseService();
-        String request = "SELECT * FROM workers";
-        ResultSet resultSet = dataBaseService.select(request);
-        try {
-            while (resultSet.next()) {
-                Worker cur= new Worker();
-                cur.setLogin(resultSet.getString("login"));
-                cur.setFio(resultSet.getString("fio"));
-                workers.add(cur);
-            }
-            resultSet.close();
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-        return workers;
-    }
-
-    public Worker getWorkerByLogin(String login){
-        Worker worker = new Worker();
-        DataBaseService dataBaseService=new DataBaseService();
-        String request = "SELECT login, fio, supLogin from workers WHERE login='"+login+"'";
-        ResultSet resultSet = dataBaseService.select(request);
-        if(resultSet!=null) {
-            try {
-                resultSet.next();
-                worker.setLogin(resultSet.getString("login"));
-                worker.setFio(resultSet.getString("fio"));
-                worker.setSupLogin(resultSet.getString("supLogin"));
-                resultSet.close();
-            } catch (java.sql.SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return worker;
-    }
-
     public boolean in_system(String login){
         LoginService loginService=new LoginService();
         return loginService.getRoleByLogin(login)!=0;

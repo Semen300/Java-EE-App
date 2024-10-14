@@ -22,7 +22,7 @@ public class DataBaseService {
     }
 
     public ResultSet select(String sql){
-        try {
+        try{
             Connection con = getConnect();
             Statement statement = con.createStatement();
             return statement.executeQuery(sql);
@@ -33,30 +33,24 @@ public class DataBaseService {
     }
 
     public void insert(String sql){
-        try {
-            Connection con = getConnect();
+        try(Connection con = getConnect()) {
             con.createStatement().executeUpdate(sql);
-            con.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     public void update(String sql){
-        try{
-            Connection con = getConnect();
+        try(Connection con = getConnect()){
             con.createStatement().executeUpdate(sql);
-            con.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     public void delete (String sql){
-        try {
-            Connection con = getConnect();
+        try(Connection con = getConnect()){
             con.createStatement().executeUpdate(sql);
-            con.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -64,13 +58,11 @@ public class DataBaseService {
 
     public boolean exists(String sql){
         boolean is_exists = false;
-        try{
-            Connection con = getConnect();
+        try(Connection con = getConnect()){
             ResultSet rs = con.createStatement().executeQuery(sql);
             rs.last();
             int num = rs.getRow();
             if(num>0) is_exists=true;
-            con.close();
         } catch(java.sql.SQLException e){
             e.printStackTrace();
         }

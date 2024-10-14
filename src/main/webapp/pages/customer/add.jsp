@@ -115,7 +115,7 @@
             </div>
         </div>
         <button class="add-btn" type="submit" id="bottom-button1">Сохранить</button>
-        <button class="add-btn" id="bottom-button2" onclick="window.location='${pageContext.request.contextPath}/customer'">Отмена</button>
+        <button class="add-btn" type="reset" id="bottom-button2" onclick="window.location='${pageContext.request.contextPath}/customer'">Отмена</button>
     </form>
 </div>
 <script>

@@ -70,18 +70,6 @@ public class TaskService {
         }
         return summ;
     }
-    public void saveTask(Task task){
-        DataBaseService dataBaseService = new DataBaseService();
-        String request = "INSERT INTO tasks (id, name, conID, finished)" +
-                "VALUES ('"+task.getId()+"','"+task.getName()+"','"+task.getConID()+"','"+task.isFinished()+"')";
-        dataBaseService.insert(request);
-    }
-
-    public void updateTask(Task task){
-        DataBaseService dataBaseService = new DataBaseService();
-        String request = "UPDATE tasks SET name='" + task.getName()+"',con_id='"+task.getConID()+"' finished="+task.isFinished()+" WHERE id="+task.getId();
-        dataBaseService.update(request);
-    }
     public void setFinished (int taskID){
         DataBaseService dataBaseService = new DataBaseService();
         String request = "UPDATE tasks SET finished=True WHERE id="+taskID;

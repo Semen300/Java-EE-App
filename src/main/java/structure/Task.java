@@ -7,7 +7,7 @@ public class Task {
     private int conID;
     private Item item;
     private int amount;
-    boolean finished;
+    private boolean finished;
     private float price;
 
     public Task(){}
